@@ -6,8 +6,9 @@ const user={
         token: getToken(),
         introduction:"",
         roles:[],
-        menus:[],
+        menus:null,
         elements:[],
+        avatar: '',
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -30,7 +31,10 @@ const user={
         },
         SET_PERMISSION_MENUS: (state, permissionMenus) => {
           state.permissionMenus = permissionMenus;
-        }
+        },
+        SET_AVATAR: (state, avatar) => {
+          state.avatar = avatar;
+        },
     },
     actions:{
         //登录
@@ -57,6 +61,7 @@ const user={
                     const data=res;
                     commit('SET_ROLES','admin');
                     commit('SET_NAME',data.name);
+                    commit('SET_AVATAR','');// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
                     const menus={}
                     for(let i=0;i<data.menus.length;i++){
@@ -68,6 +73,7 @@ const user={
                     reject(error);
                 });
                 getMenuTree(state.token).then(res=>{
+                    console.log("侧边获取菜单：",res);
                     commit('SET_PERMISSION_MENUS',res)
                 })
             })

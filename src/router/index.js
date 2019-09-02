@@ -10,11 +10,17 @@ export const constantRouterMap=[{
   component:_import('login/index'),
   hidden:true
 },
-// {
-//   path:'/authredirect',
-//   component:_import('login/authredirect'),
-//   hidden:true
-// }
+{
+   path:'/',
+   component:Layout,
+   redirect:'/dashboard',
+   name:"首页",
+   hidden:true,
+   children:[{
+     path:'dashboard',
+     //component:_import('dashboard/index')
+   }]
+}
 ]
 
 export default new Router({

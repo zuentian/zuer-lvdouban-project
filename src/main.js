@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'assets/custom-theme/index.css' // 换肤版本element-ui css
 import NProgress from 'nprogress'// Progress 进度条
 import 'nprogress/nprogress.css'// Progress 进度条 样式
-
+import vueWaves from './directive/waves';// 水波纹指令
 import IconSvg from 'components/Icon-svg';// svg 组件
 import { getToken } from 'utils/auth';
 
@@ -17,7 +17,8 @@ const requireAll = requireContext => requireContext.keys().map(requireContext)
 const req = require.context('@/assets/icons', false, /\.svg$/)//要用这个'/\.svg$/'需要在webpack.base.conf.js里配置
 const iconMap = requireAll(req)
 //配置icon-svg组件 end
-Vue.use(ElementUI)
+Vue.use(ElementUI);
+Vue.use(vueWaves);
 
 const whiteList=['/login','/authredirect']//不重定向白名单
 
@@ -25,13 +26,15 @@ Vue.config.productionTip = false
 
 router.beforeEach((to,from,next)=>{
   NProgress.start();//开启Progress
+  console.log("检查token是否存在：",getToken())
   if(getToken()){//判断是否有token
     if(to.path=='/login'){
       next({path:'/'});
     }else{
-      if (store.getters.menus === undefined) { // 判断当前用户是否已拉取完user_info信息
+      console.log("检查是否之前已取得了userInfo信息：",store.getters.menus);
+      if (store.getters.menus==undefined) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(info => { // 拉取user_info
-          console.log("拉取user_info数据：",info,store.getters.menus)
+          console.log("未取得user_info数据,开始重新拉取：",info,store.getters.menus)
           const menus = store.getters.menus;
           // for (let i = 0; i < info.menus.length; i++) {
           //   menus[info.menus[i].code] = true;

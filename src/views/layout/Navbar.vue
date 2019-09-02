@@ -13,19 +13,17 @@
       <router-link class='inlineBlock' to="/">
         <el-dropdown-item> 首页 </el-dropdown-item>
       </router-link>
-      <a target='_blank' href="https://github.com/wxiaoqi/ace-admin/">
+      <!-- <a target='_blank' href="">
         <el-dropdown-item> 项目地址 </el-dropdown-item>
-      </a>
-      <el-dropdown-item divided><span @click="logout" style="display:block;">退出登录</span></el-dropdown-item>
+      </a> -->
+      <el-dropdown-item divided><span @click="logout" style="display:block;">退出</span></el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
 </el-menu>
 </template>
 
 <script>
-import {
-  mapGetters
-} from 'vuex';
+import { mapGetters } from 'vuex';
 import Levelbar from './Levelbar';
 import TabsView from './TabsView';
 import Hamburger from 'components/Hamburger';
@@ -56,7 +54,7 @@ export default {
       this.$store.dispatch('ToggleSideBar')
     },
     logout() {
-      this.$store.dispatch('FedLogOut')
+      this.$store.dispatch('LogOut')
         .then(() => {
           location.reload(); // 为了重新实例化vue-router对象 避免bug
         });

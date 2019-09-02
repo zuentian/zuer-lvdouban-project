@@ -41,8 +41,11 @@
     props: {
       routes: {
         type: Array
-      }
-    }
+      },
+	},
+	mounted(){
+		
+	}
   }
 </script>
 
