@@ -9,25 +9,23 @@
         </div>
         
         <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-            <el-table-column align="center" label="序号" width="65"> 
-                <template slot-scope="scope"><span>{{scope.row.id}}</span></template> 
-            </el-table-column>
-            <el-table-column width="200" align="center" label="姓名"> 
+
+            <el-table-column  align="center" label="姓名"> 
                 <template slot-scope="scope"><span>{{scope.row.name}}</span></template>
             </el-table-column>
-            <el-table-column width="110" align="center" label="账户">
+            <el-table-column  align="center" label="账户">
                 <template slot-scope="scope"><span>{{scope.row.username}}</span></template> 
             </el-table-column>
-            <el-table-column width="110" align="center" label="性别"> 
+            <el-table-column align="center" label="性别"> 
                 <template slot-scope="scope"><span>{{scope.row.sex}}</span></template> 
             </el-table-column>
-            <el-table-column width="300" align="center" label="备注"> 
+            <el-table-column align="center" label="备注"> 
                 <template slot-scope="scope"><span>{{scope.row.description}}</span></template> 
             </el-table-column>
-            <el-table-column width="180" align="center" label="最后时间"> 
+            <el-table-column  align="center" label="最后时间"> 
                 <template slot-scope="scope"><span>{{scope.row.updTime}}</span></template> 
             </el-table-column>
-            <el-table-column width="200" align="center" label="最后更新人"> 
+            <el-table-column  align="center" label="最后更新人"> 
                 <template slot-scope="scope"><span>{{scope.row.updName}}</span></template> 
             </el-table-column>
             <el-table-column align="center" label="操作" width="150"> 
@@ -66,7 +64,7 @@ export default {
     methods:{
         queryUserInfo(){
             queryUser(this.listQuery).then(res=>{
-
+                this.list=res;
             })
         },
         handleFilter(){

@@ -42,5 +42,11 @@ export const asyncRouterMap=[{
     component: _import('admin/user/index'),
     name: '用户管理',
     authority: 'userManager'
+  },{
+    path: 'dictManager',
+    icon: 'dict-setting',
+    component: _import('admin/dict/index'),
+    name: '用户管理',
+    authority: 'dictManager'
   }]
 }]
