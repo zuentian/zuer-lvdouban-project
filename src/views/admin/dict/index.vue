@@ -138,7 +138,7 @@ export default {
   },
   methods:{
     ...mapActions([
-      'QueryDict',
+      'QueryPageFromDict',
       'GetDictTypeName',
       'QueryDictByDictId',
       'EditDictByDictId',
@@ -147,7 +147,7 @@ export default {
     async query(pageSize,currentPage){
 
       this.loading = true;
-      await this.$store.dispatch('QueryDict', {
+      await this.$store.dispatch('QueryPageFromDict', {
         currentPage:this.currentPage,
         pageSize:this.pageSize,
         dictType:this.dictType,

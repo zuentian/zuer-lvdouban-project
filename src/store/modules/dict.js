@@ -1,5 +1,5 @@
 
-import {queryDict} from 'api/dict'
+import {queryPageFromDict,getDictTypeName} from 'api/dict'
 
 const dict={
     state:{
@@ -9,9 +9,12 @@ const dict={
     
     },
     actions: {
-        QueryDict({dispatch,commit,state},params){
-            return queryDict(params);
+        QueryPageFromDict({dispatch,commit,state},params){
+            return queryPageFromDict(params);
         },
+        GetDictTypeName({dispatch,commit,state},params){
+            return getDictTypeName(params);
+        }
     }
 }
 
