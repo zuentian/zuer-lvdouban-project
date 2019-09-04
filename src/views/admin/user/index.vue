@@ -8,29 +8,16 @@
             
         </div>
         
-        <el-table :key='tableKey' :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
+        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
 
-            <el-table-column  align="center" label="姓名"> 
-                <template slot-scope="scope"><span>{{scope.row.name}}</span></template>
-            </el-table-column>
-            <el-table-column  align="center" label="账户号码">
-                <template slot-scope="scope"><span>{{scope.row.username}}</span></template> 
-            </el-table-column>
-            <el-table-column  align="center" label="号称">
-                <template slot-scope="scope"><span>{{scope.row.nameBak}}</span></template> 
-            </el-table-column>
-            <el-table-column align="center" label="性别"> 
-                <template slot-scope="scope"><span>{{scope.row.sex}}</span></template> 
-            </el-table-column>
-            <el-table-column align="center" label="备注"> 
-                <template slot-scope="scope"><span>{{scope.row.description}}</span></template> 
-            </el-table-column>
-            <el-table-column  align="center" label="最后时间"> 
-                <template slot-scope="scope"><span>{{scope.row.updTime}}</span></template> 
-            </el-table-column>
-            <el-table-column  align="center" label="最后更新人"> 
-                <template slot-scope="scope"><span>{{scope.row.updName}}</span></template> 
-            </el-table-column>
+            <el-table-column  align="center" label="姓名" prop="name"></el-table-column>
+            <el-table-column  align="center" label="账户号码" prop="username"></el-table-column>
+            <el-table-column  align="center" label="号称" prop="nameBak"></el-table-column>
+            <el-table-column align="center" label="性别" prop="sex" :formatter="formatterSex"></el-table-column>
+            <el-table-column align="center" label="备注" prop="description"></el-table-column>
+            <el-table-column  align="center" label="最后时间" prop="updTime"></el-table-column>
+            <el-table-column  align="center" label="最后更新人" prop="updName"></el-table-column>
+
             <el-table-column align="center" label="操作" width="150"> 
                 <template slot-scope="scope">
                     <el-button v-if="userManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑</el-button>
@@ -91,7 +78,6 @@ export default {
             listLoading:false,
             userManager_btn_edit:true,
             userManager_btn_del:true,
-            tableKey:0,
             total:0,
             dialogFormVisible:false,
             dialogStatus:"",
@@ -188,6 +174,16 @@ export default {
             }).then(list=>{
                 this.sexOptions=list;
             })
+        },
+        formatterSex:function(row,column){
+            for(var sexs of this.sexOptions){
+                if(row.sex==''||row.sex==undefined){
+                    return "未知";
+                }
+                if(sexs.value==row.sex){
+                    return sexs.label;
+                }
+            }
         }
     },
     created(){
