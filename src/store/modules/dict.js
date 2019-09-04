@@ -1,5 +1,6 @@
 
-import {queryPageFromDict,getDictTypeName} from 'api/dict'
+import {queryPageFromDict,getDictTypeName,
+    addDict,queryDictByDictId,editDictByDictId,deleteDictByDictId,queryDictByDictType} from 'api/dict'
 
 const dict={
     state:{
@@ -14,6 +15,21 @@ const dict={
         },
         GetDictTypeName({dispatch,commit,state},params){
             return getDictTypeName(params);
+        },
+        AddDict({dispatch,commit,state},params){
+            return addDict(params);
+        },
+        QueryDictByDictId({dispatch,commit,state},params){
+            return queryDictByDictId(params);
+        },
+        EditDictByDictId({dispatch,commit,state},params){
+            return editDictByDictId(params);
+        },
+        DeleteDictByDictId({dispatch,commit,state},params){
+            return deleteDictByDictId(params);
+        },
+        QueryDictByDictType({dispatch,commit,state},params){
+            return queryDictByDictType(params);
         }
     }
 }

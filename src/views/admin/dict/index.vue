@@ -66,7 +66,7 @@
     </el-dialog>
 
      <el-dialog  title="修改数据字典" :visible.sync="dialogVisibleEdit"  width="50%" :before-close="handleClose" :loading="loadingEdit">
-      <el-form ref="dictInfoEdit" :model="dictInfoEdit" :rules="ruleEdits"  label-width="120px" label-position="right" >
+      <el-form ref="dictInfoEdit" :model="dictInfoEdit" :rules="ruleEdits"  label-width="140px" label-position="right" >
             <div class="well">
                 <el-form-item label="数据字典类型" prop="dictType"><el-input v-model.trim="dictInfoEdit.dictType" :disabled="true"></el-input></el-form-item>
                 <el-form-item label="数据字典类型名称" prop="dictTypeName"><el-input v-model.trim="dictInfoEdit.dictTypeName" :disabled="true"></el-input></el-form-item>
@@ -88,7 +88,7 @@
 <script>
 
 import { mapActions } from 'vuex'
-import { async } from 'q';
+//import { async } from 'q';
 
 export default {
   name: 'dict',
@@ -143,6 +143,7 @@ export default {
       'QueryDictByDictId',
       'EditDictByDictId',
       'DeleteDictByDictId',
+      'AddDict',
     ]),
     async query(pageSize,currentPage){
 
@@ -214,16 +215,29 @@ export default {
         this.loadingAdd = false
       })
     },
-    async deleteDictInfo(row){
-      await this.$store.dispatch("DeleteDictByDictId",{
-        dictId:row.dictId
-      }).then(res=>{
-        this.$notify({title: '删除成功',message: '',type: 'success'});
-        this.query(this.pageSize,this.currentPage);
-      }).catch(err=>{
-          this.$store.commit('SHOW_ERROR_TOAST', err.data.message || err.data)    
-      }).finally(() => {
-      })
+    deleteDictInfo(row){
+      this.$confirm('此操作将会永久删除，请再次确认是否删除？', '确认信息', {
+        distinguishCancelAndClose: true,
+        confirmButtonText: '删除',
+        cancelButtonText: '放弃删除'
+      }).then(() => {
+        this.$store.dispatch("DeleteDictByDictId",{
+          dictId:row.dictId
+        }).then(res=>{
+          this.$notify({title: '删除成功',message: '',type: 'success'});
+          this.query(this.pageSize,this.currentPage);
+        }).catch(err=>{
+            this.$store.commit('SHOW_ERROR_TOAST', err.data.message || err.data)    
+        }).finally(() => {
+        })
+      }).catch(action => {
+        this.$message({
+            type: 'info',
+            message: action === 'cancel'
+            ? '放弃删除并离开页面'
+            : '停留在当前页面'
+        })
+      });
     },
     handleClose(done) {
         //this.$confirm('确认关闭？')

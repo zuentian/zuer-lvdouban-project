@@ -7,3 +7,13 @@ export function queryUser(param){
         params: param
       });
 }
+
+export function addUser(param){
+  return fetch({
+    url: '/api/UserController/addUser',
+    method: 'post',
+    params: {
+      user:param
+    }
+  })
+}
