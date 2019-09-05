@@ -8,14 +8,25 @@
             
         </div>
         
-        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
-
+        <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%" :expand-row-keys="expands" 
+                @expand-change="expandSelect" :row-key="getRowKeys">
+            <el-table-column type="index" width="40"> </el-table-column>
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="demo-table-expand">
+                        <el-row>
+                            <el-col :span="2"><span align="center" style="font-weight:bold" >备注</span></el-col>
+                            <el-col :span="22"><span>{{ props.row.description }}</span></el-col>
+                        </el-row>
+                    </el-form>
+                </template>
+            </el-table-column>
             <el-table-column  align="center" label="姓名" prop="name"></el-table-column>
             <el-table-column  align="center" label="账户号码" prop="username"></el-table-column>
             <el-table-column  align="center" label="号称" prop="nameBak"></el-table-column>
             <el-table-column align="center" label="性别" prop="sex" :formatter="formatterSex"></el-table-column>
-            <el-table-column align="center" label="备注" prop="description"></el-table-column>
-            <el-table-column  align="center" label="最后时间" prop="updTime"></el-table-column>
+            <el-table-column align="center" label="创建时间" prop="crtTime" min-width='100px'></el-table-column>
+            <el-table-column  align="center" label="最后时间" prop="updTime" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="最后更新人" prop="updName"></el-table-column>
 
             <el-table-column align="center" label="操作" width="150"> 
@@ -25,23 +36,23 @@
                 </template> 
             </el-table-column>
         </el-table>
-        <div v-show="!listLoading&&total>0" class="pagination-container">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"> </el-pagination>
+        <div style="text-align:center" v-show="!listLoading&&total>0" class="pagination-container">
+            <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total"> </el-pagination>
         </div>
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" v-loading='dialogLoading'>
             <el-form :model="form" :rules="rules" ref="form" label-width="100px">
             <el-form-item label="姓名" prop="name">
                 <el-input v-model="form.name" placeholder="请输入姓名"></el-input>
             </el-form-item>
             <el-form-item label="账户号码" prop="username">
-                <el-input v-if="dialogStatus == 'create'" v-model="form.username" placeholder="请输入账户"></el-input>
-                <el-input v-else v-model="form.username" placeholder="请输入账户号码" readonly></el-input>
+                <el-input v-if="dialogStatus == 'create'" v-model="form.username" placeholder="请输入账户号码"></el-input>
+                <el-input v-else v-model="form.username" placeholder="请输入账户号码" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="号称" prop="nameBak">
                 <el-input v-model="form.nameBak" placeholder="请输入号称"></el-input>
             </el-form-item>
             <el-form-item v-if="dialogStatus == 'create'" label="密码" placeholder="请输入密码" prop="password">
-                <el-input type="password" v-model="form.password"></el-input>
+                <el-input type="password" v-model="form.password"  auto-complete="new-password"></el-input><!--auto-complete避免密码填充-->
             </el-form-item>
             <el-form-item label="性别">
                 <el-radio-group v-model="form.sex" style="float: left;margin:10px 0px">
@@ -61,7 +72,7 @@
     </div>
 </template>
 <script>
-import {queryUser,addUser} from 'api/user/index'
+import {queryUser,addUser,queryUserById,updateUserById ,deleteUserById} from 'api/user/index'
 import { mapGetters } from 'vuex';
 import md5 from 'js-md5'
 export default {
@@ -73,7 +84,7 @@ export default {
                 page:1,
                 limit:10,
             },
-            list:null,
+            list:[],//此处最好不用null,比如用到getRowKeys(row)时，null会报错
             userManager_btn_add:true,
             listLoading:false,
             userManager_btn_edit:true,
@@ -108,13 +119,18 @@ export default {
                 ],
             },
             sexOptions:[],
-
+            dialogLoading:false,
+            getRowKeys(row){
+                return row.id;
+            },
+            expands:[],
         }
     },
     methods:{
         queryUserInfo(){
             queryUser(this.listQuery).then(res=>{
-                this.list=res;
+                this.list=res.list;
+                this.total=res.count;
             })
         },
         handleFilter(){
@@ -126,20 +142,37 @@ export default {
             this.clearParams();
         },
         handleSizeChange(val){
-
+            this.listQuery.limit = val;
+            this.queryUserInfo();
         },
         handleCurrentChange(val){
-
+            this.listQuery.page=val;
+            this.queryUserInfo();
         },
-        handleUpdate(){
-
-        },
-        handleDelete(){
-
+        handleDelete(row){
+            this.$confirm('此操作将会永久删除角色信息，请再次确认是否删除？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '删除',
+                        cancelButtonText: '放弃删除'
+            }).then(() => {
+                deleteUserById(row.id).then((res)=>{
+                    this.queryUserInfo();
+                    this.$notify({title: '删除成功',message: '',type: 'success'});
+                }).catch(err=>{
+                })
+            }).catch(action => {
+                this.$message({
+                    type: 'info',
+                    message: action === 'cancel'
+                    ? '放弃删除并离开页面'
+                    : '停留在当前页面'
+                })
+            });
         },
         create(formName){
             this.$refs[formName].validate(valid => {
                 if (valid) {
+                    this.dialogLoading=true;
                     this.form.password=md5(this.form.password);//加密
                     addUser(this.form).then(() => {
                         this.dialogFormVisible = false;
@@ -152,10 +185,41 @@ export default {
                         });
                     }).catch(()=>{
                         this.form.password="";
+                    }).finally(()=>{
+                         this.dialogLoading=false;
                     })
                 }else{
                     return false;
                 }
+            })
+        },
+        update(formName){
+            this.$refs[formName].validate(valid=>{
+                if(valid){
+                    this.dialogLoading=true;
+                    updateUserById(this.form).then(()=>{
+                        this.dialogFormVisible=false;
+                        this.queryUserInfo();
+                        this.$notify({
+                            title:'成功',
+                            message:'编辑成功',
+                            type:'success',
+                            duration:2000
+                        })
+                    }).catch(()=>{
+                    }).finally(()=>{
+                        this.dialogLoading=false;
+                    })
+                }else{
+                    return false;
+                }
+            })
+        },
+        handleUpdate(row){
+            queryUserById(row.id).then((user)=>{
+                this.form=user;
+                this.dialogFormVisible=true;
+                this.dialogStatus='update';
             })
         },
         clearParams(){
@@ -183,6 +247,21 @@ export default {
                 if(sexs.value==row.sex){
                     return sexs.label;
                 }
+            }
+        },
+        cancel(formName){
+            this.dialogFormVisible = false;
+            this.$refs[formName].resetFields();
+        },
+        expandSelect(row, expandedRows) {
+            var that = this
+            if (expandedRows.length) {
+                that.expands = []
+                if (row) {
+                that.expands.push(row.id)// 每次push进去的是每行的ID
+                }
+            } else {
+                that.expands = []// 默认不展开
             }
         }
     },

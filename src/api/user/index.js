@@ -17,3 +17,27 @@ export function addUser(param){
     }
   })
 }
+
+export function queryUserById(id){
+  return fetch({
+    url:'/api/UserController/queryUserById/'+id,
+    method:'get',
+  })
+}
+
+export function updateUserById(param){
+  return fetch({
+    url: '/api/UserController/updateUserById',
+    method: 'post',
+    params: {
+      user:param
+    }
+  })
+}
+
+export function deleteUserById(id){
+  return fetch({
+    url:'/api/UserController/deleteUserById/'+id,
+    method:'get'
+  })
+}
