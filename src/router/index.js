@@ -46,7 +46,13 @@ export const asyncRouterMap=[{
     path: 'dictManager',
     icon: 'dict-setting',
     component: _import('admin/dict/index'),
-    name: '用户管理',
+    name: '数据字典',
     authority: 'dictManager'
+  },{
+    path: 'menuManager',
+    icon: 'menu-setting',
+    component: _import('admin/menu/index'),
+    name: '菜单管理',
+    authority: 'menuManager'
   }]
 }]
