@@ -34,3 +34,17 @@ export function updateMenu(param){
         }
     })
 }
+
+export function deleteMenuById(id){
+    return fetch({
+        url:'/api/MenuController/deleteMenuById/'+id,
+        method:'get',
+    })
+}
+
+export function queryMenuByParentIdCount(id){
+    return fetch({
+        url:'/api/MenuController/queryMenuByParentIdCount/'+id,
+        method:'get',
+    })
+}

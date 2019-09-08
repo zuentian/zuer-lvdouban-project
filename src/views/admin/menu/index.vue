@@ -12,7 +12,7 @@
         <el-col :span="8" style='margin-top:15px;'>
             <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
             <el-tree class="filter-tree" :data="treeData" node-key="id" highlight-current :props="defaultProps" :filter-node-method="filterNode"
-            ref="menuTree" @node-click="getNodeData" default-expand-all >
+            ref="menuTree" @node-click="getNodeData" default-expand-all  >
             </el-tree>
         </el-col>
         <el-col :span="16" style='margin-top:15px;'>
@@ -21,11 +21,14 @@
             <el-form-item label="路径编码" prop="code">
                 <el-input v-model="form.code" :disabled="formEdit&&formAdd" placeholder="请输入路径编码"></el-input>
             </el-form-item>
-                <el-form-item label="标题" prop="title">
+            <el-form-item label="标题" prop="title">
                 <el-input v-model="form.title" :disabled="formEdit&&formAdd"  placeholder="请输入标题"></el-input>
             </el-form-item>
-                <el-form-item label="父级节点" prop="parentId">
-                <el-input v-model="form.parentId" :disabled="formEdit&&formAdd" placeholder="请输入父级节点" readonly></el-input>
+            <el-form-item label="当前节点" prop="id" v-if="form.id">
+                <el-input v-model="form.id" :disabled="formEdit&&formAdd" placeholder="请输入父级节点"   readonly></el-input>
+            </el-form-item>
+            <el-form-item label="父级节点" prop="parentId" v-if="form.parentId">
+                <el-input v-model="form.parentId" :disabled="formEdit&&formAdd" placeholder="请输入父级节点"   readonly></el-input>
             </el-form-item>
             <el-form-item label="图标" prop="icon">
                 <el-input v-model="form.icon" :disabled="formEdit&&formAdd" placeholder="请输入图标"></el-input>
@@ -59,7 +62,7 @@
             </el-card>
             <el-card class="box-card">
                 <span>按钮或资源</span>
-                <!-- <menu-element :menuId='currentId' ref="menuElement"></menu-element> -->
+                <menu-element :menuId='currentId' ref="menuElement"></menu-element>
             </el-card>
         </el-col>
 
@@ -68,9 +71,12 @@
     </div>
 </template>
 <script>
-import {queryMenuTree,queryMenuById,addMenu,updateMenu} from 'api/menu/index'
+import {queryMenuTree,queryMenuById,addMenu,updateMenu,deleteMenuById,queryMenuByParentIdCount} from 'api/menu/index'
 export default {
     //name:'menu',
+    components:{
+        'menu-element': () => import('./components/element')
+    },
     data(){
         return {
             menuManager_btn_add:true,
@@ -88,7 +94,7 @@ export default {
             form:{
                 id:undefined,
                 parentId:undefined,
-                orderNum:0,
+                orderNum:undefined,
                 title:undefined,
                 type:undefined,
                 icon:undefined,
@@ -126,46 +132,71 @@ export default {
             }
         },
         handleDelete(){
-            this.$confirm('此操作将会永久删除菜单信息，请再次确认是否删除？', '确认信息', {
-                        distinguishCancelAndClose: true,
-                        confirmButtonText: '删除',
-                        cancelButtonText: '放弃删除'
-            }).then(() => {
-                deleteMenuById(row.id).then((res)=>{
-                    this.queryList();
-                    this.onCancel();
-                    this.$notify({title: '删除成功',message: '',type: 'success'});
-                }).catch(err=>{
+            if(this.form.id){
+                queryMenuByParentIdCount(this.form.id).then(count=>{
+                    if(count<=0){
+                        this.$confirm('此操作将会永久删除菜单信息，请再次确认是否删除？', '确认信息', {
+                                    distinguishCancelAndClose: true,
+                                    confirmButtonText: '删除',
+                                    cancelButtonText: '放弃删除'
+                        }).then(() => {
+                            deleteMenuById(this.form.id).then((res)=>{
+                                this.queryList();
+                                this.onCancel();
+                                this.form={};
+                                this.$notify({title: '删除成功',message: '',type: 'success'});
+                            }).catch(err=>{
+                            })
+                        }).catch(action => {
+                            this.$message({
+                                type: 'info',
+                                message: action === 'cancel'
+                                ? '放弃删除并离开页面'
+                                : '停留在当前页面'
+                            })
+                        });
+                    }else{
+                        this.$message({
+                            type: 'info',
+                            message: "删除菜单之前,请先删除子菜单"
+                        })
+                    }
                 })
-            }).catch(action => {
+            }else{
                 this.$message({
                     type: 'info',
-                    message: action === 'cancel'
-                    ? '放弃删除并离开页面'
-                    : '停留在当前页面'
+                    message: "请选择需要删除的菜单"
                 })
-            });
+            }
         },
         filterNode(value,data){
             if (!value) return true;
             return data.label.indexOf(value) !== -1;
         },
-        getNodeData(data){
-            this.formAdd=true;
-            this.formStatus='';
-            if (!this.formEdit) {
-                this.formStatus = 'update';
+        getNodeData(data,node,){
+            if(node.level!=1||node.expanded){
+                this.formAdd=true;
+                this.formStatus='';
+                if (!this.formEdit) {
+                    this.formStatus = 'update';
+                }
+                queryMenuById(data.id).then(menu => {
+                    this.form = menu;
+                    this.formEdit=true;
+                    this.currentId = menu.id;
+                }).finally(() => {
+                    this.$refs.menuElement.queryList();//如果这个方法放在then里面，会比this.currentId先执行
+                });
+                
+            }else{
+                this.form={};
+                this.currentId="";
             }
-            queryMenuById(data.id).then(menu => {
-                this.form = menu;
-                this.formEdit=true;
-                this.currentId=this.form.id;
-            });
         },
         resetForm(){
             this.form={
                 parentId:this.currentId,
-                orderNum:0,
+                orderNum:undefined,
                 title:undefined,
                 type:undefined,
                 icon:undefined,
@@ -203,11 +234,21 @@ export default {
                     duration: 2000
                 });
             })
-        }
-
+        },
+        async queryMenuRoot(){
+            await this.$store.dispatch('QueryDictByDictType',{
+                dictType:'MENUROOT'
+            }).then(list=>{
+                if(list.length>0){
+                    this.currentId=list[0].label;
+                }
+            })
+            this.queryList();
+            this.$refs.menuElement.queryList();
+        },
     },
     created(){
-        this.queryList();
+        this.queryMenuRoot();
     },
     watch: {
         filterText(val) {
