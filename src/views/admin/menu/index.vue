@@ -109,6 +109,7 @@ export default {
             formAdd:true,
             typeOptions:['dirt','menu'],
             currentId:"",
+            root:"",
         }
     },
     methods:{
@@ -118,10 +119,12 @@ export default {
             })
         },
         handlerAdd(){
-            this.formEdit=true;
-            this.resetForm();
-            this.formAdd=false;
-            this.formStatus='create';
+            if(this.formAdd){
+                this.formEdit=true;
+                this.resetForm();
+                this.formAdd=false;
+                this.formStatus='create';
+            }
         },
         handlerEdit(){
             this.formAdd=true;
@@ -185,17 +188,23 @@ export default {
                     this.formEdit=true;
                     this.currentId = menu.id;
                 }).finally(() => {
-                    this.$refs.menuElement.queryList();//如果这个方法放在then里面，会比this.currentId先执行
+                    this.$refs.menuElement.queryList(this.currentId);//如果将这个子类里方法放在then里面，会比this.currentId先执行
                 });
                 
             }else{
                 this.form={};
+                this.form.id=this.root;
+                this.formAdd=true;
+                this.formStatus='';
+                this.formEdit=true;
+
                 this.currentId="";
+                this.$refs.menuElement.queryList(this.currentId);
             }
         },
         resetForm(){
             this.form={
-                parentId:this.currentId,
+                parentId:this.form.id,
                 orderNum:undefined,
                 title:undefined,
                 type:undefined,
@@ -240,11 +249,12 @@ export default {
                 dictType:'MENUROOT'
             }).then(list=>{
                 if(list.length>0){
-                    this.currentId=list[0].label;
+                    this.root=list[0].label;
+                    this.form.id=list[0].label;
                 }
             })
             this.queryList();
-            this.$refs.menuElement.queryList();
+            this.$refs.menuElement.queryList("");
         },
     },
     created(){
