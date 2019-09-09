@@ -160,7 +160,7 @@ export default {
                 if (valid) {
                     addElement(this.form).then(() => {
                         this.dialogFormVisible = false;
-                        this.queryList();
+                        this.queryList(this.menuId);
                         this.$notify({
                             title: '成功',
                             message: '创建成功',
