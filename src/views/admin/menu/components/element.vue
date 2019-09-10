@@ -55,7 +55,7 @@
     </div>
 </template>
 <script>
-import {query,addElement,queryElementById} from 'api/element/index'
+import {query,addElement,queryElementById,updateElementById,deleteElementById} from 'api/element/index'
 export default { 
     
     props: ["menuId"],
@@ -173,11 +173,51 @@ export default {
                 }
             })
         },
+        update(formName){
+            const set = this.$refs;
+            set[formName].validate(valid => {
+                if (valid) {
+                    updateElementById(this.form).then(() => {
+                        this.dialogFormVisible = false;
+                        this.queryList(this.menuId);
+                        this.$notify({
+                            title: '成功',
+                            message: '编辑成功',
+                            type: 'success',
+                            duration: 2000
+                        });
+                    })
+                } else {
+                    return false;
+                }
+            })
+        },
         handleUpdate(row){
             queryElementById(row.id).then(data => {
                 this.form = data;
                 this.dialogFormVisible = true;
                 this.dialogStatus = 'update';
+            });
+        },
+        handleDelete(row){
+            
+            this.$confirm('此操作将会永久删除菜单信息，请再次确认是否删除？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '删除',
+                        cancelButtonText: '放弃删除'
+            }).then(() => {
+                deleteElementById(row.id).then((res)=>{
+                    this.queryList(this.menuId);
+                    this.$notify({title: '删除成功',message: '',type: 'success'});
+                }).catch(err=>{
+                })
+            }).catch(action => {
+                this.$message({
+                    type: 'info',
+                    message: action === 'cancel'
+                    ? '放弃删除并离开页面'
+                    : '停留在当前页面'
+                })
             });
         }
     },

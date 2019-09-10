@@ -25,3 +25,20 @@ export function queryElementById(id){
     })
 
 }
+
+export function updateElementById(param){
+    return fetch({
+        url:'/api/ElementController/updateElementById',
+        method:'post',
+        params:{
+            element:param
+        }
+    })
+}
+
+export function deleteElementById(id){
+    return fetch({
+        url:'/api/ElementController/deleteElementById/'+id,
+        method:'get',
+    })
+}
