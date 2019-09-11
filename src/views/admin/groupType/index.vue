@@ -8,8 +8,8 @@
         <el-table  :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%">
             <el-table-column align="center" label="编码" min-width='100px' prop="code"></el-table-column>
             <el-table-column align="center" label="类型名称" min-width='100px' prop="name"></el-table-column>
-            <el-table-column align="center" label="描述" min-width='100px' prop="description"></el-table-column>
-            <el-table-column align="center" label="最后更新时间" min-width='100px' prop="updTime"></el-table-column>
+            <el-table-column align="center" label="描述" min-width='250px' prop="description"></el-table-column>
+            <el-table-column align="center" label="最后更新时间" min-width='120px' prop="updTime"></el-table-column>
             <el-table-column align="center" label="最后更新人" min-width='100px' prop="updName"></el-table-column>
             <el-table-column align="center" label="最后更新主机" min-width='100px' prop="updHost"></el-table-column>
             <el-table-column align="center" label="操作" width="150">

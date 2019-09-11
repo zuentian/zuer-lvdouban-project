@@ -44,3 +44,11 @@ export function deleteGroupTypeById(id){
         method:'get',
     })
 }
+
+export function getAllGroupTypes(){
+    return fetch({
+        url:'/api/GroupTypeController/getAllGroupTypes',
+        method:'post',
+        params:""
+    })
+}
