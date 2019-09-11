@@ -62,7 +62,7 @@ export const asyncRouterMap=[{
     authority:'groupTypeManager'
   },{
     path: 'groupManager',
-    icon: 'group_setting',
+    icon: 'group-setting',
     component: _import('admin/group/index'),
     name: '角色权限管理',
     authority: 'groupManager'

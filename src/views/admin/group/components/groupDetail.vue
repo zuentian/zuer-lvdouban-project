@@ -62,7 +62,7 @@ export default {
                 label: 'label'
             },
             listQuery: {
-                groupType: this.type,
+                groupTypeId: this.groupTypeId,
             },
             currentId:"",
             formEdit:true,
@@ -73,7 +73,7 @@ export default {
         }
     } ,
     props: {
-        type: {
+        groupTypeId: {
         
         }
     },
@@ -83,7 +83,7 @@ export default {
     methods:{
         queryList(){
             queryTree(this.listQuery).then(res=>{
-                
+                this.treeData = res;
             })
         },
         filterNode(){
@@ -115,7 +115,7 @@ export default {
                 code: undefined,
                 name: undefined,
                 description: undefined,
-                groupType: this.type
+                groupTypeId: this.groupTypeId
             };
         },
         create(){
