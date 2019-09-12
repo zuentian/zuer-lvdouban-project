@@ -18,3 +18,26 @@ export function insertGroup(param){
         }
     })
 }
+export function queryGroupById(id){
+    return fetch({
+        url:'/api/GroupController/queryGroupById/'+id,
+        method:'get',
+    })
+}
+
+export function updateGroupById(param){
+    return fetch({
+        url:'/api/GroupController/updateGroupById',
+        method:'post',
+        params:{
+            group:param
+        }
+    })
+}
+
+export function queryGroupByParentIdCount(parentId){
+    return fetch({
+        url:'/api/GroupController/queryGroupByParentIdCount/'+parentId,
+        method:'post',
+    })
+}

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {queryTree,insertGroup} from 'api/group/index'
+import {queryTree,insertGroup,queryGroupById,updateGroupById,queryGroupByParentIdCount} from 'api/group/index'
 export default {
     name:'groupDetail',
     data(){
@@ -78,9 +78,19 @@ export default {
         }
     },
     created(){
+        this.queryGroupRoot();
         this.queryList();
     },
     methods:{
+        async queryGroupRoot(){
+            await this.$store.dispatch('QueryDictByDictType',{
+                dictType:'GROUPROOT'
+            }).then(list=>{
+                if(list.length>0){
+                    this.currentId=list[0].label;
+                }
+            })
+        },
         queryList(){
             queryTree(this.listQuery).then(res=>{
                 this.treeData = res;
@@ -89,8 +99,14 @@ export default {
         filterNode(){
 
         },
-        getNodeData(){
-
+        getNodeData(data){
+            if (!this.formEdit) {
+                this.formStatus = 'update';
+            }
+            queryGroupById(data.id).then(group=> {
+                this.form =group;
+            });
+            this.currentId = data.id;
         },
         handlerAdd(){
             this.resetForm();
@@ -98,10 +114,48 @@ export default {
             this.formStatus = 'create';
         },
         handlerEdit(){
-
+            if (this.form.id) {
+                this.formEdit = false;
+                this.formStatus = 'update';
+            }
         },
         handleDelete(){
-
+            if(this.form.id){
+                queryGroupByParentIdCount(this.form.id).then(count=>{
+                    if(count<=0){
+                        this.$confirm('此操作将会永久删除菜单信息，请再次确认是否删除？', '确认信息', {
+                                    distinguishCancelAndClose: true,
+                                    confirmButtonText: '删除',
+                                    cancelButtonText: '放弃删除'
+                        }).then(() => {
+                            deleteGroupById(this.form.id).then((res)=>{
+                                this.queryList();
+                                this.onCancel();
+                                this.form={};
+                                this.$notify({title: '删除成功',message: '',type: 'success'});
+                            }).catch(err=>{
+                            })
+                        }).catch(action => {
+                            this.$message({
+                                type: 'info',
+                                message: action === 'cancel'
+                                ? '放弃删除并离开页面'
+                                : '停留在当前页面'
+                            })
+                        });
+                    }else{
+                        this.$message({
+                            type: 'info',
+                            message: "删除菜单之前,请先删除子菜单"
+                        })
+                    }
+                })
+            }else{
+                this.$message({
+                    type: 'info',
+                    message: "请选择需要删除的菜单"
+                })
+            }
         },
         handlerAuthority(){
 
@@ -124,6 +178,17 @@ export default {
                 this.$notify({
                     title: '成功',
                     message: '创建成功',
+                    type: 'success',
+                    duration: 2000
+                });
+            });
+        },
+        update() {
+            updateGroupById(this.form).then(() => {
+                this.queryList();
+                this.$notify({
+                    title: '成功',
+                    message: '修改成功',
                     type: 'success',
                     duration: 2000
                 });
