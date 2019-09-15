@@ -38,13 +38,20 @@
             </el-form>
         </el-col>
 
+        <el-dialog :title="dialogUserName" :visible.sync="dialogUserVisible">
+            <group-user :groupId="currentId" @closeUserDialog="closeUserDialog" ref="groupUser"></group-user>
+        </el-dialog>
     </el-row>
 </template>
 
 <script>
-import {queryTree,insertGroup,queryGroupById,updateGroupById,queryGroupByParentIdCount} from 'api/group/index'
+import {queryTree,insertGroup,queryGroupById,updateGroupById,queryGroupByParentIdCount,deleteGroupById} from 'api/group/index'
 export default {
     name:'groupDetail',
+    components: {
+        'group-user': () => import('./groupUser'),
+        'group-authority': () => import('./groupAuthority')
+    },
     data(){
         return {
             groupManager_btn_add:true,
@@ -54,6 +61,8 @@ export default {
             groupManager_btn_userManager:true,
             groupManager_btn_edit:true,
             groupManager_btn_add:true,
+            dialogUserVisible:false,
+            dialogUserName:"关联用户",
             labelPosition:'right',
             filterText:"",
             treeData:[],
@@ -77,6 +86,11 @@ export default {
         
         }
     },
+    watch: {
+        filterText(val) {
+            this.$refs.groupTree.filter(val);
+        }
+    },
     created(){
         this.queryGroupRoot();
         this.queryList();
@@ -96,9 +110,10 @@ export default {
                 this.treeData = res;
             })
         },
-        filterNode(){
-
-        },
+        filterNode(value, data) {
+            if (!value) return true;
+            return data.label.indexOf(value) !== -1;
+        }   ,
         getNodeData(data){
             if (!this.formEdit) {
                 this.formStatus = 'update';
@@ -161,7 +176,11 @@ export default {
 
         },
         handlerUser(){
-
+            this.dialogUserVisible=true;
+            if (this.$refs.groupUser !== undefined) {
+                this.$refs.groupUser.groupId = this.currentId;
+                this.$refs.groupUser.initUsers();
+            }
         },
         resetForm() {
             this.form = {
@@ -197,6 +216,9 @@ export default {
         onCancel() {
             this.formEdit = true;
             this.formStatus = '';
+        },
+        closeUserDialog() {
+            this.dialogUserVisible = false;
         },
     }
 }

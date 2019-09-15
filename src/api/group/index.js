@@ -38,6 +38,13 @@ export function updateGroupById(param){
 export function queryGroupByParentIdCount(parentId){
     return fetch({
         url:'/api/GroupController/queryGroupByParentIdCount/'+parentId,
-        method:'post',
+        method:'get',
+    })
+}
+
+export function deleteGroupById(id){
+    return fetch({
+        url:'/api/GroupController/deleteGroupById/'+id,
+        method:'get',
     })
 }

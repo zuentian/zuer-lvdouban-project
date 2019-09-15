@@ -21,12 +21,12 @@
                     </el-form>
                 </template>
             </el-table-column>
-            <el-table-column  align="center" label="姓名" prop="name"></el-table-column>
+            <el-table-column  align="center" label="姓名" prop="name" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="账户号码" prop="username"></el-table-column>
             <el-table-column  align="center" label="号称" prop="nameBak"></el-table-column>
             <el-table-column align="center" label="性别" prop="sex" :formatter="formatterSex"></el-table-column>
-            <el-table-column align="center" label="创建时间" prop="crtTime" min-width='100px'></el-table-column>
-            <el-table-column  align="center" label="最后时间" prop="updTime" min-width='100px'></el-table-column>
+            <el-table-column align="center" label="创建时间" prop="crtTime" min-width='140px'></el-table-column>
+            <el-table-column  align="center" label="最后时间" prop="updTime" min-width='140px'></el-table-column>
             <el-table-column  align="center" label="最后更新人" prop="updName"></el-table-column>
 
             <el-table-column align="center" label="操作" width="150"> 

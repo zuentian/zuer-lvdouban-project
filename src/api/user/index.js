@@ -41,3 +41,28 @@ export function deleteUserById(id){
     method:'get'
   })
 }
+
+export function queryUserByGroupId(groupId){
+  return fetch({
+    url:'/api/UserController/queryUserByGroupId/'+groupId,
+    method:'get'
+  })
+}
+
+export function queryUserLikeUserNames(name){
+  return fetch({
+    url:'/api/UserController/queryUserLikeUserNames',
+    method:'post',
+    params:name,
+  })
+}
+
+
+export function updateUserByGroupId(data){
+  return fetch({
+    url:'/api/UserController/updateUserByGroupId',
+    method:'post',
+    params:data
+  })
+}
+

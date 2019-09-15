@@ -20,6 +20,12 @@ service.interceptors.request.use(config => {
   if (store.getters.token) {
     config.headers['Authorization'] = getToken(); // 让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
   }
+  if(store.getters.name){
+    config.headers['username']=store.getters.name;
+  }
+  if(store.getters.userId){
+    config.headers['userId']=store.getters.userId;
+  }
   return config;
 }, error => {
   // Do something with request error
