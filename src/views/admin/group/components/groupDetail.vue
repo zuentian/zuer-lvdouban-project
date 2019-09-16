@@ -41,6 +41,9 @@
         <el-dialog :title="dialogUserName" :visible.sync="dialogUserVisible">
             <group-user :groupId="currentId" @closeUserDialog="closeUserDialog" ref="groupUser"></group-user>
         </el-dialog>
+        <el-dialog :title="dialogAuthorityName" size="large" :visible.sync="dialogAuthorityVisible">
+            <group-authority :groupId="currentId" @closeAuthorityDialog="closeAuthorityDialog" ref="groupAuthority"></group-authority>
+        </el-dialog>
     </el-row>
 </template>
 
@@ -62,7 +65,9 @@ export default {
             groupManager_btn_edit:true,
             groupManager_btn_add:true,
             dialogUserVisible:false,
+            dialogAuthorityVisible:false,
             dialogUserName:"关联用户",
+            dialogAuthorityName:"权限分配",
             labelPosition:'right',
             filterText:"",
             treeData:[],
@@ -173,7 +178,11 @@ export default {
             }
         },
         handlerAuthority(){
-
+            this.dialogAuthorityVisible=true;
+            if (this.$refs.groupAuthority !== undefined) {
+                this.$refs.groupAuthority.groupId = this.currentId;
+                this.$refs.groupAuthority.initAuthoritys();
+            }
         },
         handlerUser(){
             this.dialogUserVisible=true;
@@ -194,6 +203,7 @@ export default {
         create(){
             insertGroup(this.form).then(() => {
                 this.queryList();
+                this.formEdit = true;
                 this.$notify({
                     title: '成功',
                     message: '创建成功',
@@ -201,10 +211,12 @@ export default {
                     duration: 2000
                 });
             });
+            
         },
         update() {
             updateGroupById(this.form).then(() => {
                 this.queryList();
+                this.formEdit = true;
                 this.$notify({
                     title: '成功',
                     message: '修改成功',
@@ -220,6 +232,9 @@ export default {
         closeUserDialog() {
             this.dialogUserVisible = false;
         },
+        closeAuthorityDialog(){
+            this.dialogAuthorityVisible=false;
+        }
     }
 }
 </script>

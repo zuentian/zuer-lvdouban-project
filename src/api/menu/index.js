@@ -48,3 +48,18 @@ export function queryMenuByParentIdCount(id){
         method:'get',
     })
 }
+
+export function updateMenuGroupByGroupId(param){
+    return fetch({
+        url:'/api/MenuController/updateMenuGroupByGroupId',
+        method:'post',
+        params:param
+    })
+}
+
+export function queryMenuGroupByGroupId(groupId){
+    return fetch({
+        url:'/api/MenuController/queryMenuGroupByGroupId/'+groupId,
+        method:'get',
+    })
+}
