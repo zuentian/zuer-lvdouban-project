@@ -41,7 +41,7 @@
         <el-dialog :title="dialogUserName" :visible.sync="dialogUserVisible">
             <group-user :groupId="currentId" @closeUserDialog="closeUserDialog" ref="groupUser"></group-user>
         </el-dialog>
-        <el-dialog :title="dialogAuthorityName" size="large" :visible.sync="dialogAuthorityVisible">
+        <el-dialog :title="dialogAuthorityName" size="large" :visible.sync="dialogAuthorityVisible"  width="70%">
             <group-authority :groupId="currentId" @closeAuthorityDialog="closeAuthorityDialog" ref="groupAuthority"></group-authority>
         </el-dialog>
     </el-row>
