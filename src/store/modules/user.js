@@ -68,14 +68,15 @@ const user={
                     commit('SET_USERID',data.id);
                     commit('SET_AVATAR','');// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
-                    console.log("data.menuTrees",data.menuTrees);
+                    
                     commit('SET_PERMISSION_MENUS',data.menuTrees);
 
                     const menus={}
                     for(let i=0;i<data.menus.length;i++){
                         menus[data.menus[i].code]=true;
                     }
-                    commit('SET_MENUS',menus);
+                    //commit('SET_MENUS',menus);
+                    commit('SET_MENUS',data.routerTrees);
                     resolve(res);
                 }).catch(error => {
                     reject(error);
