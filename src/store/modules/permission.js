@@ -35,7 +35,9 @@ const permission={
  * @param roles
  */
 function filterAsyncRouter(asyncRouterMap,menus,menuDatas){
-    console.log("asyncRouterMap,menus,menuDatas:",asyncRouterMap,menus,menuDatas);
+    console.log("asyncRouterMap,menus,menuDatas1111:",asyncRouterMap);
+    console.log("asyncRouterMap,menus,menuDatas2222:",menus);
+    console.log("asyncRouterMap,menus,menuDatas3333:",menuDatas);
     const accessedRouters=asyncRouterMap.filter(route=>{
         if(hasPermission(menus,route)){
             route.name=menuDatas[route.authority].title;

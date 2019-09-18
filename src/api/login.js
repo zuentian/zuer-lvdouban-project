@@ -30,15 +30,6 @@ export function logOut(){
 export function getAllMenus(){
     return fetch({
         url:'/api/MenuController/queryAllMenu',
-        method:'get'
+        method:'post'
     })
-}
-
-export function getMenuTree(token){
-    return fetch({
-        url:'/api/MenuController/getMenuTree',
-        methode:'get',
-        params:{token}
-    })
-
 }

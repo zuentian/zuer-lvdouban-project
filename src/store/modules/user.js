@@ -1,5 +1,5 @@
 import {getToken,setToken,removeToken} from 'utils/auth'
-import {login,getUserInfo,logOut,getMenuTree} from 'api/login'
+import {login,getUserInfo,logOut} from 'api/login'
 const user={
     state:{
         name:"",
@@ -64,10 +64,13 @@ const user={
                 getUserInfo(state.token).then(res=>{
                     const data=res;
                     commit('SET_ROLES','admin');
-                    commit('SET_NAME',data.name);
+                    commit('SET_NAME',data.username);
                     commit('SET_USERID',data.id);
                     commit('SET_AVATAR','');// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
+                    console.log("data.menuTrees",data.menuTrees);
+                    commit('SET_PERMISSION_MENUS',data.menuTrees);
+
                     const menus={}
                     for(let i=0;i<data.menus.length;i++){
                         menus[data.menus[i].code]=true;
@@ -77,10 +80,6 @@ const user={
                 }).catch(error => {
                     reject(error);
                 });
-                getMenuTree(state.token).then(res=>{
-                    console.log("侧边获取菜单：",res);
-                    commit('SET_PERMISSION_MENUS',res)
-                })
             })
         },
         LogOut({commit}){

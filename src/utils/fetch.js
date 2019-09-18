@@ -82,7 +82,9 @@ service.interceptors.response.use(
 
   },
   error => {
+    
     //axios响应的错误信息没有错误消息，必须error.response才可以,坑！！！
+    console.log(error)
     Message({
       message: error.response.data.message,
       type: 'error',
