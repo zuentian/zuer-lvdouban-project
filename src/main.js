@@ -42,7 +42,7 @@ router.beforeEach((to,from,next)=>{
           store.dispatch('GenerateRoutesSimple',  store.getters.routerTrees).then(() => { // 可以生成按需懒加载访问的路由表
           //store.dispatch('GenerateRoutes', menus).then(() => { 
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
-            //这里还有一个小hack的地方，就是router.addRoutes之后的next()可能会失效，因为可能next()的时候路由并没有完全add完成
+            //这里还有一个小hack(暴力解决)的地方，就是router.addRoutes之后的next()可能会失效，因为可能next()的时候路由并没有完全add完成
             next({ ...to }); // hack方法 确保addRoutes已完成
           }).catch(err=>{
           })
