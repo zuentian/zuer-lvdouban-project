@@ -10,6 +10,8 @@ const user={
         elements:[],
         avatar: '',
         userId:"",
+        routerTrees:null,
+        permissionMenus:null,
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -33,11 +35,16 @@ const user={
         SET_USERID:(state,userId)=>{
             state.userId=userId;
         },
+        //页面的菜单树状结构
         SET_PERMISSION_MENUS: (state, permissionMenus) => {
           state.permissionMenus = permissionMenus;
         },
         SET_AVATAR: (state, avatar) => {
           state.avatar = avatar;
+        },
+        //自由加载路由
+        SET_MENUS_SIMPER:(state,routerTrees)=>{
+            state.routerTrees=routerTrees;
         },
     },
     actions:{
@@ -62,6 +69,8 @@ const user={
         GetInfo({commit,state}){
             return new Promise((resolve,reject)=>{
                 getUserInfo(state.token).then(res=>{
+                    
+                    console.log("res",res)
                     const data=res;
                     commit('SET_ROLES','admin');
                     commit('SET_NAME',data.username);
@@ -70,13 +79,12 @@ const user={
                     commit('SET_INTRODUCTION',data.description);
                     
                     commit('SET_PERMISSION_MENUS',data.menuTrees);
-
-                    const menus={}
-                    for(let i=0;i<data.menus.length;i++){
-                        menus[data.menus[i].code]=true;
-                    }
-                    //commit('SET_MENUS',menus);
-                    commit('SET_MENUS',data.routerTrees);
+                    // const menus={}
+                    // for(let i=0;i<data.menus.length;i++){
+                    //     menus[data.menus[i].code]=true;
+                    // }
+                    // commit('SET_MENUS',menus);
+                    commit('SET_MENUS_SIMPER',data.routerTrees);
                     resolve(res);
                 }).catch(error => {
                     reject(error);
@@ -88,6 +96,7 @@ const user={
                 commit('SET_TOKEN', '');
                 commit('SET_MENUS', undefined);
                 commit('SET_ELEMENTS', undefined);
+                commit('SET_PERMISSION_MENUS', undefined);
                 removeToken();
                 logOut().then(res=>{
                     resolve();

@@ -9,6 +9,7 @@ const getters={
     avatar: state => state.user.avatar,
     name:state=>state.user.name,
     userId:state=>state.user.userId,
+    routerTrees:state=>state.user.routerTrees,
 }
 
 export default getters

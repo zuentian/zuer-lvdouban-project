@@ -31,18 +31,20 @@ router.beforeEach((to,from,next)=>{
     if(to.path=='/login'){
       next({path:'/'});
     }else{
-      console.log("检查是否之前已取得了userInfo信息：",store.getters.menus);
-      if (store.getters.menus==undefined) { // 判断当前用户是否已拉取完user_info信息
+      console.log("检查是否之前已取得了userInfo信息：",store.getters.permissionMenus);
+      if (store.getters.permissionMenus==undefined) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(info => { // 拉取user_info
-          console.log("未取得user_info数据,开始重新拉取：",info,store.getters.menus)
-          const menus = store.getters.menus;
+          console.log("未取得user_info数据,开始重新拉取：",info,store.getters.permissionMenus)
+          // const menus = store.getters.menus;
           // for (let i = 0; i < info.menus.length; i++) {
           //   menus[info.menus[i].code] = true;
           // }
-          store.dispatch('GenerateRoutes', menus).then(() => { // 生成可访问的路由表
+          store.dispatch('GenerateRoutesSimple',  store.getters.routerTrees).then(() => { // 可以生成按需懒加载访问的路由表
+          //store.dispatch('GenerateRoutes', menus).then(() => { 
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
             //这里还有一个小hack的地方，就是router.addRoutes之后的next()可能会失效，因为可能next()的时候路由并没有完全add完成
             next({ ...to }); // hack方法 确保addRoutes已完成
+          }).catch(err=>{
           })
         }).catch(() => {
             //前端退出
