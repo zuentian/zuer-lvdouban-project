@@ -14,11 +14,9 @@
         <el-col :span="19" style='margin-top:15px;'>
             <el-table ref="elementTable" :data="list" border fit highlight-current-row @select="handleSelectionChange" style="width: 100%" @select-all="selectAll">
                 <el-table-column v-if="groupManager_element" type="selection" width="55"></el-table-column>
-                <el-table-column width="200px" align="center" label="资源编码" prop="code"></el-table-column>
-                <el-table-column width="200px" align="center" label="资源类型" prop="type"></el-table-column>
-                <el-table-column width="200px" align="center" label="资源名称" prop="name"></el-table-column>
-                <el-table-column width="200px" align="center" label="资源地址" prop="uri"></el-table-column>
-                <el-table-column width="200px" align="center" label="资源请求类型" prop="method"></el-table-column>
+                <el-table-column min-width="240px" align="center" label="资源编码" prop="code"></el-table-column>
+                <el-table-column min-width="200px" align="center" label="资源名称" prop="name"></el-table-column>
+                <el-table-column min-width="200px" align="center" label="资源请求类型" prop="method" :formatter="formatterMethod"></el-table-column>
             </el-table>
         </el-col>
     </el-row>
@@ -41,6 +39,7 @@ export default {
             list:[],
             groupManager_element:true,
             menuId:"",
+            methodMaps:null,
         }
     },
     watch: {
@@ -50,6 +49,7 @@ export default {
     },
     created() {
         this.queryList();
+        this.getElementMethods();
     },
     props:{
         groupId:{
@@ -62,6 +62,9 @@ export default {
                 this.treeData = res;
                 this.initAuthoritys();
             })
+        },
+        formatterMethod(row, column, cellValue, index){
+            return this.methodMaps[cellValue];
         },
         update(){
             this.$emit('closeAuthorityDialog');
@@ -90,7 +93,6 @@ export default {
                     for (let i = 0; i < this.list.length; i++) {
                         obj[this.list[i].id] = this.list[i];
                     }
-                    //const toggle = {};
                     for (let i = 0; i < res.length; i++) {
                         const id = res[i].elementId
                         if (obj[id] !== undefined) {
@@ -146,7 +148,19 @@ export default {
             vals.elementIds=ids.join();
             vals.menuId=this.menuId;
             addElementGroupByGroupIdAndElementIds(vals)
-        }
+        },
+        async getElementMethods(){
+            await this.$store.dispatch('QueryDictByDictType',{
+                dictType:'ELEMENTMETHOD'
+            }).then(list=>{
+                    const maps={};
+                    for(var i=0;i<list.length;i++){
+                        maps[list[i].value]=list[i].label;
+                    }
+                    this.methodMaps=maps
+                }
+            )
+        },
     }
 }
 </script>

@@ -10,6 +10,7 @@ const getters={
     name:state=>state.user.name,
     userId:state=>state.user.userId,
     routerTrees:state=>state.user.routerTrees,
+    elements:state=>state.user.elements,
 }
 
 export default getters

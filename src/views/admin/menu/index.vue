@@ -47,9 +47,6 @@
             <el-form-item label="描述"   prop="description">
                 <el-input v-model="form.description" :disabled="formEdit&&formAdd" placeholder="请输入描述"></el-input>
             </el-form-item>
-            <el-form-item label="前端组件"   prop="attr1">
-                <el-input v-model="form.attr1" :disabled="formEdit&&formAdd" placeholder="请输入描述"></el-input>
-            </el-form-item>
             <el-form-item v-if="formStatus == 'update'">
                 <el-button type="primary" @click="update">更新</el-button>
                 <el-button @click="onCancel">取消</el-button>
@@ -71,6 +68,7 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import {queryMenuTree,queryMenuById,addMenu,updateMenu,deleteMenuById,queryMenuByParentIdCount} from 'api/menu/index'
 export default {
     //name:'menu',
@@ -79,9 +77,9 @@ export default {
     },
     data(){
         return {
-            menuManager_btn_add:true,
-            menuManager_btn_edit:true,
-            menuManager_btn_del:true,
+            menuManager_btn_add:false,
+            menuManager_btn_edit:false,
+            menuManager_btn_del:false,
             filterText:"",
             listQuery: {
                 title: ""//因为用的是element自带的过滤方法，所以用不到
@@ -111,6 +109,11 @@ export default {
             currentId:"",
             root:"",
         }
+    },
+    computed: {
+        ...mapGetters([
+        'elements'
+        ])
     },
     methods:{
         queryList(){
@@ -259,6 +262,9 @@ export default {
     },
     created(){
         this.queryMenuRoot();
+        this.menuManager_btn_add = this.elements['menuManager:btn_add'];
+        this.menuManager_btn_del = this.elements['menuManager:btn_del'];
+        this.menuManager_btn_edit = this.elements['menuManager_btn_edit'];
     },
     watch: {
         filterText(val) {

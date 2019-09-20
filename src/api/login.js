@@ -27,9 +27,4 @@ export function logOut(){
     })
 }
 
-export function getAllMenus(){
-    return fetch({
-        url:'/api/MenuController/queryAllMenu',
-        method:'post'
-    })
-}
+

@@ -45,7 +45,6 @@
       },
 	},
 	mounted(){
-		console.log("导航栏的是permissionMenus：",this.permissionMenus)
 	}
   }
 </script>

@@ -12,6 +12,7 @@ const user={
         userId:"",
         routerTrees:null,
         permissionMenus:null,
+        elements:null,
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -46,6 +47,10 @@ const user={
         SET_MENUS_SIMPER:(state,routerTrees)=>{
             state.routerTrees=routerTrees;
         },
+        //功能按钮权限
+        SET_ELEMENT:(state,elements)=>{
+            state.elements=elements;
+        }
     },
     actions:{
         //登录
@@ -70,7 +75,6 @@ const user={
             return new Promise((resolve,reject)=>{
                 getUserInfo(state.token).then(res=>{
                     
-                    console.log("res",res)
                     const data=res;
                     commit('SET_ROLES','admin');
                     commit('SET_NAME',data.username);
@@ -85,6 +89,15 @@ const user={
                     // }
                     // commit('SET_MENUS',menus);
                     commit('SET_MENUS_SIMPER',data.routerTrees);
+
+
+                    const elements = {};
+                    for (let i = 0; i < data.elements.length; i++) {
+                        elements[data.elements[i].code] = true;
+                    }
+                    console.log("功能权限限制：",elements);
+                    commit('SET_ELEMENT',elements);
+
                     resolve(res);
                 }).catch(error => {
                     reject(error);

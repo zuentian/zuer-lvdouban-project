@@ -12,7 +12,6 @@
   export default {
     computed: {
       visitedViews() {
-        console.log("this.$store.state.app.visitedViews",this.$route.matched);
         return this.$store.state.app.visitedViews.slice(-6)
       }
     },

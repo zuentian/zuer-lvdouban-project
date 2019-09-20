@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import {queryTree,insertGroup,queryGroupById,updateGroupById,queryGroupByParentIdCount,deleteGroupById} from 'api/group/index'
 export default {
     name:'groupDetail',
@@ -57,13 +58,11 @@ export default {
     },
     data(){
         return {
-            groupManager_btn_add:true,
-            groupManager_btn_edit:true,
-            groupManager_btn_del:true,
-            groupManager_btn_resourceManager:true,
-            groupManager_btn_userManager:true,
-            groupManager_btn_edit:true,
-            groupManager_btn_add:true,
+            groupManager_btn_add:false,
+            groupManager_btn_edit:false,
+            groupManager_btn_del:false,
+            groupManager_btn_resourceManager:false,
+            groupManager_btn_userManager:false,
             dialogUserVisible:false,
             dialogAuthorityVisible:false,
             dialogUserName:"关联用户",
@@ -96,9 +95,19 @@ export default {
             this.$refs.groupTree.filter(val);
         }
     },
+    computed: {
+        ...mapGetters([
+        'elements',
+        ])
+    },
     created(){
         this.queryGroupRoot();
         this.queryList();
+        this.groupManager_btn_edit = this.elements['groupManager:btn_edit'];
+        this.groupManager_btn_del = this.elements['groupManager:btn_del'];
+        this.groupManager_btn_add = this.elements['groupManager:btn_add'];
+        this.groupManager_btn_userManager = this.elements['groupManager:btn_userManager'];
+        this.groupManager_btn_resourceManager = this.elements['groupManager:btn_resourceManager'];
     },
     methods:{
         async queryGroupRoot(){

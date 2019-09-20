@@ -43,6 +43,9 @@ function formate(menus){
         }
     }
 }
+/*
+为每个路径懒加载组件
+*/
 function getViews(component) {
     if(component==null||component==''||component==undefined){
         component='/layout/Layout';//没有component,则为其分配默认的组件

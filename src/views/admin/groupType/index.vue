@@ -12,7 +12,7 @@
             <el-table-column align="center" label="最后更新时间" min-width='120px' prop="updTime"></el-table-column>
             <el-table-column align="center" label="最后更新人" min-width='100px' prop="updName"></el-table-column>
             <el-table-column align="center" label="最后更新主机" min-width='100px' prop="updHost"></el-table-column>
-            <el-table-column align="center" label="操作" width="150">
+            <el-table-column v-if='groupTypeManager_btn_edit||groupTypeManager_btn_del' align="center" label="操作" width="150">
                 <template slot-scope="scope">
                     <el-button v-if="groupTypeManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑
                     </el-button>
@@ -43,13 +43,14 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import {addGroupType,queryGroupTypeByParam,queryGroupTypeById,updateGroupTypeById,deleteGroupTypeById} from 'api/groupType/index'
 export default {
     data(){
         return {
-            groupTypeManager_btn_add:true,
-            groupTypeManager_btn_edit:true,
-            groupTypeManager_btn_del:true,
+            groupTypeManager_btn_add:false,
+            groupTypeManager_btn_edit:false,
+            groupTypeManager_btn_del:false,
             listQuery:{
                 page: 1,
                 limit: 20,
@@ -85,6 +86,14 @@ export default {
     },
     created() {
         this.queryList();
+        this.groupTypeManager_btn_edit = this.elements['groupTypeManager:btn_edit'];
+        this.groupTypeManager_btn_del = this.elements['groupTypeManager:btn_del'];
+        this.groupTypeManager_btn_add = this.elements['groupTypeManager:btn_add'];
+    },
+    computed: {
+        ...mapGetters([
+        'elements',
+        ])
     },
     methods:{
         queryList() {

@@ -29,7 +29,7 @@
             <el-table-column  align="center" label="最后时间" prop="updTime" min-width='140px'></el-table-column>
             <el-table-column  align="center" label="最后更新人" prop="updName"></el-table-column>
 
-            <el-table-column align="center" label="操作" width="150"> 
+            <el-table-column v-if="userManager_btn_edit||userManager_btn_del"  align="center" label="操作" width="150"> 
                 <template slot-scope="scope">
                     <el-button v-if="userManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑</el-button>
                     <el-button v-if="userManager_btn_del" size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
@@ -85,10 +85,10 @@ export default {
                 limit:10,
             },
             list:[],//此处最好不用null,比如用到getRowKeys(row)时，null会报错
-            userManager_btn_add:true,
+            userManager_btn_add:false,
             listLoading:false,
-            userManager_btn_edit:true,
-            userManager_btn_del:true,
+            userManager_btn_edit:false,
+            userManager_btn_del:false,
             total:0,
             dialogFormVisible:false,
             dialogStatus:"",
@@ -268,10 +268,13 @@ export default {
     created(){
         this.queryUserInfo();
         this.querySexs();
+        this.userManager_btn_edit = this.elements['userManager:btn_edit'];
+        this.userManager_btn_del = this.elements['userManager:btn_del'];
+        this.userManager_btn_add = this.elements['userManager:btn_add'];
     },
     computed: {
         ...mapGetters([
-        //'elements'
+        'elements',
         'QueryDictByDictType',
         ])
     },
