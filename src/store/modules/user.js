@@ -13,6 +13,8 @@ const user={
         routerTrees:null,
         permissionMenus:null,
         elements:null,
+        username:"",
+        nameBak:"",
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -32,6 +34,12 @@ const user={
         },
         SET_NAME:(state,name)=>{
             state.name=name;
+        },
+        SET_NAMEBAK:(state,nameBak)=>{
+            state.nameBak=nameBak;
+        },
+        SET_USERNAME:(state,username)=>{
+            state.username=username;
         },
         SET_USERID:(state,userId)=>{
             state.userId=userId;
@@ -77,7 +85,9 @@ const user={
                     
                     const data=res;
                     commit('SET_ROLES','admin');
-                    commit('SET_NAME',data.username);
+                    commit('SET_USERNAME',data.username);
+                    commit('SET_NAME',data.name);
+                    commit('SET_NAMEBAK',data.nameBak);
                     commit('SET_USERID',data.id);
                     commit('SET_AVATAR','');// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);

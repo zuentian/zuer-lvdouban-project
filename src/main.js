@@ -31,6 +31,7 @@ router.beforeEach((to,from,next)=>{
     if(to.path=='/login'){
       next({path:'/'});
     }else{
+      console.log("检测菜单是否存在：",store.getters.permissionMenus);
       if (store.getters.permissionMenus==undefined) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(info => { // 拉取user_info
           console.log("未取得user_info数据,开始重新拉取：",info,store.getters.permissionMenus)
@@ -40,6 +41,7 @@ router.beforeEach((to,from,next)=>{
           // }
           store.dispatch('GenerateRoutesSimple',  store.getters.routerTrees).then(() => { // 可以生成按需懒加载访问的路由表
           //store.dispatch('GenerateRoutes', menus).then(() => { //全加载方式，此处不再采用
+          console.log("store.getters.addRouters",store.getters.addRouters)
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表
             //这里还有一个小hack(暴力解决)的地方，就是router.addRoutes之后的next()可能会失效，因为可能next()的时候路由并没有完全add完成
             next({ ...to }); // hack方法 确保addRoutes已完成
@@ -57,7 +59,14 @@ router.beforeEach((to,from,next)=>{
       //   if (hasPermission(store.getters.roles, to.meta.role)) {
       //     next();//
       //   } else {
-        next();
+        if (to.matched.length === 0) { //当token等信息存在的情况下，输入错误的路由网址，会判断离开的网址，跳转回去
+            from.path ? next({
+              path: from.path
+            }) : next('/404'); 
+        } else {
+          next(); //如果匹配到正确跳转
+        }
+      
       //   }
       //   // 可删 ↑
       }

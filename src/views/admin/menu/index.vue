@@ -264,7 +264,7 @@ export default {
         this.queryMenuRoot();
         this.menuManager_btn_add = this.elements['menuManager:btn_add'];
         this.menuManager_btn_del = this.elements['menuManager:btn_del'];
-        this.menuManager_btn_edit = this.elements['menuManager_btn_edit'];
+        this.menuManager_btn_edit = this.elements['menuManager:btn_edit'];
     },
     watch: {
         filterText(val) {

@@ -57,12 +57,12 @@ export default {
                 name:"",
                 menuId:"",
             },
-            menuManager_btn_element_add:false,
+            menuManager_btn_element_add:true,
             listLoading:false,
             total:0,
             list:[],
-            menuManager_btn_element_edit:false,
-            menuManager_btn_element_del:false,
+            menuManager_btn_element_edit:true,
+            menuManager_btn_element_del:true,
             dialogStatus:"",
             dialogFormVisible:false,
             form:{
@@ -215,9 +215,9 @@ export default {
     },
     created() {
         this.getElementMethods();
-        this.menuManager_btn_element_add = this.elements['menuManager:btn_element_add'];
-        this.menuManager_btn_element_del = this.elements['menuManager:btn_element_del'];
-        this.menuManager_btn_element_edit = this.elements['menuManager:btn_element_edit'];
+        //this.menuManager_btn_element_add = this.elements['menuManager:btn_element_add'];//功能权限增删改，最好不要加权限
+        //this.menuManager_btn_element_del = this.elements['menuManager:btn_element_del'];//功能权限增删改，最好不要加权限
+        //this.menuManager_btn_element_edit = this.elements['menuManager:btn_element_edit'];//功能权限增删改，最好不要加权限
     }
 }
 </script>

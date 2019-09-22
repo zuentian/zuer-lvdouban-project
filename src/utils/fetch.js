@@ -20,8 +20,8 @@ service.interceptors.request.use(config => {
   if (store.getters.token) {
     config.headers['Authorization'] = getToken(); // 让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
   }
-  if(store.getters.name){
-    config.headers['username']=store.getters.name;
+  if(store.getters.username){
+    config.headers['username']=store.getters.username;
   }
   if(store.getters.userId){
     config.headers['userId']=store.getters.userId;
@@ -68,7 +68,6 @@ service.interceptors.response.use(
       });
       return Promise.reject('error');
     }
-    //console.log("response",response);
     if (response.status !== 200 && res.status !== 200) {
       Message({
         message: res.message,
@@ -76,7 +75,6 @@ service.interceptors.response.use(
         duration: 5 * 1000
       });
     } else {
-      //console.log("response",response.data);
       return response.data;
     }
 
@@ -84,7 +82,6 @@ service.interceptors.response.use(
   error => {
     
     //axios响应的错误信息没有错误消息，必须error.response才可以,坑！！！
-    console.log(error)
     Message({
       message: error.response.data.message,
       type: 'error',

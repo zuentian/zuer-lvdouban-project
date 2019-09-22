@@ -27,8 +27,8 @@ const permission={
         //     })
         // },
         GenerateRoutesSimple({commit},menus){
-            return new Promise(resolve=>{
-                formate(menus);
+            return new Promise((resolve,reject)=>{
+                formate(menus)
                 commit('SET_ROUTERS',menus);
                 resolve();
             })
@@ -37,7 +37,7 @@ const permission={
 }
 function formate(menus){
     for(var i=0;i<menus.length;i++){
-        menus[i].component=getViews(menus[i].component);
+        menus[i].component=getViews(menus[i].component,menus[i].type);
         if(menus[i].children!=null&&menus[i].children.length>0){
             formate(menus[i].children);
         }
@@ -46,12 +46,19 @@ function formate(menus){
 /*
 为每个路径懒加载组件
 */
-function getViews(component) {
-    if(component==null||component==''||component==undefined){
+function getViews(component,type) {
+    
+    if((component==null||component==''||component==undefined)&&type!='menu'){
         component='/layout/Layout';//没有component,则为其分配默认的组件
     }
-    return resolve => require(['@/views'+component+'.vue'],resolve)
+    
+    return (resolve,reject) => require(['@/views'+component+'.vue'],resolve).
+                                catch(e=>{ 
+                                    require(['@/views/error/401.vue'],resolve)//如果未找到组件则跳转到指定的错误页面
+                                })
   }
+
+
 /**
  * 递归过滤异步路由表，返回符合用户角色权限的路由表
  * @param asyncRouterMap

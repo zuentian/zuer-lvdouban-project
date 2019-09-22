@@ -8,7 +8,11 @@
   <!-- <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log> -->
   <!-- <screenfull class='screenfull'></screenfull> --><!--全屏功能，暂时不用-->
   <el-dropdown class="avatar-container" trigger="click">
-    <div class="avatar-wrapper"> <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'"> <i class="el-icon-caret-bottom"></i> </div>
+    <div class="avatar-wrapper"> 
+      <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
+      <i class="el-icon-caret-bottom"></i> 
+      <span>{{nameBak}}-{{name}}</span>
+    </div>
     <el-dropdown-menu class="user-dropdown" slot="dropdown">
       <router-link class='inlineBlock' to="/">
         <el-dropdown-item> 首页 </el-dropdown-item>
@@ -43,11 +47,15 @@ export default {
       //log: errLogStore.state.errLog
     }
   },
+  mounted(){
+  },
   computed: { ...mapGetters([
       'sidebar',
       'name',
-      'avatar'
+      'avatar',
+      'nameBak',
     ])
+    
   },
   methods: {
     toggleSideBar() {
@@ -86,26 +94,24 @@ export default {
         color: red;
     }
     .avatar-container {
-        height: 50px;
-        display: inline-block;
-        position: absolute;
-        right: 35px;
-        .avatar-wrapper {
-            cursor: pointer;
-            margin-top: 5px;
-            position: relative;
-            .user-avatar {
-                width: 40px;
-                height: 40px;
-                border-radius: 10px;
-            }
-            .el-icon-caret-bottom {
-                position: absolute;
-                right: -20px;
-                top: 25px;
-                font-size: 12px;
-            }
+      float:right;
+      height: 50px;
+      margin-right: 30px;
+      .avatar-wrapper {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 10px;
         }
+        .el-icon-arrow-down {
+          margin-left: 5px;
+        }
+      }
     }
 }
 </style>
