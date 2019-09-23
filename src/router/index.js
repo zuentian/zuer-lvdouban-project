@@ -41,42 +41,4 @@ export default new Router({
   routes:constantRouterMap
 })
 
-export const asyncRouterMap=[{
-  path:'/baseManager',
-  component:Layout,
-  //name:'基础配置管理',
-  //icon:'setting',
-  authority:'baseManager',
-  children:[{
-    path: 'userManager',
-    //icon: 'fa-user',
-    //component:'@/views/admin/user/index',
-    component: _import('admin/user/index'),
-    //name: '用户管理',
-    authority: 'userManager'
-  },{
-    path: 'dictManager',
-    //icon: 'dict-setting',
-    component: _import('admin/dict/index'),
-    //name: '数据字典',
-    authority: 'dictManager'
-  },{
-    path: 'menuManager',
-    //icon: 'menu-setting',
-    component: _import('admin/menu/index'),
-    //name: '菜单管理',
-    authority: 'menuManager'
-  },{
-    path:'groupTypeManager',
-    //icon:'groupType-setting',
-    component:_import('admin/groupType/index'),
-    //name:'角色类型管理',
-    authority:'groupTypeManager'
-  },{
-    path: 'groupManager',
-    //icon: 'group-setting',
-    component: _import('admin/group/index'),
-    //name: '角色权限管理',
-    authority: 'groupManager'
-  }]
-}]
+export const asyncRouterMap=[]
