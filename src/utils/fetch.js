@@ -68,6 +68,7 @@ service.interceptors.response.use(
       });
       return Promise.reject('error');
     }
+
     if (response.status !== 200 && res.status !== 200) {
       
       Message({
@@ -83,6 +84,14 @@ service.interceptors.response.use(
   error => {
     
     //axios响应的错误信息没有错误消息，必须error.response才可以,坑！！！
+    if(error.response.status==504){
+      Message({
+        message: '连接超时！',
+        type: 'error',
+        duration: 5 * 1000
+      });
+      return Promise.reject(error.response);
+    }
     Message({
       message: error.response.data.message,
       type: 'error',

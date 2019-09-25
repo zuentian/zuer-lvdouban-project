@@ -12,11 +12,17 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://localhost:9992',
+        target: 'http://localhost:9992',//auth工程
         pathRewrite: {
           '^/api': '/'
         },
       },
+      '/movie':{
+        target:'http://localhost:9994',//movie工程
+        pathRewrite: {
+          '^/movie': '/'
+        },
+      }
     },
 
     // Various Dev Server settings
