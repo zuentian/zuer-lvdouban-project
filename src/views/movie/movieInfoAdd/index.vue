@@ -135,6 +135,7 @@ export default {
             this.movieRelName=[''];
             this.movieCountry=[];
             this.movieType=[];
+            this.isDisabled=true;
             this.$refs.upload.clearFiles();//清空图片
         },
         handlePictureCardPreview(){
