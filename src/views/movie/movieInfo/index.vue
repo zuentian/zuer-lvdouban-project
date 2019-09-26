@@ -4,44 +4,44 @@
            <el-card>
                 <el-row :gutter="1">
                     <el-col :span="3">
-                        <span style="margin:10px 0;float:right">电影名字：</span>
+                        <span style="margin:5px 0;float:right">电影名字：</span>
                     </el-col>
                     <el-col  :span="4" >
-                        <el-input @keyup.enter.native="handleFilter" style="width: 100%;"  v-model="listQuery.name"></el-input>
+                        <el-input @keyup.enter.native="handleFilter" style="width: 100%;"  v-model="listQuery.name" size="small"></el-input>
                     </el-col>
                     <el-col :span="4">
-                        <span style="margin:10px 0;float:right">电影类型：</span>
+                        <span style="margin:5px 0;float:right">电影类型：</span>
                     </el-col>
                     <el-col  :span="4" >
-                        <el-select v-model="listQuery.movieType" filterable placeholder="请选择">
-                            <el-option v-for="item in optionsFromMovieType" :key="item.value" :label="item.label" :value="item.label"> </el-option>
+                        <el-select v-model="listQuery.movieType" filterable placeholder="请选择" size="small">
+                            <el-option v-for="item in optionsFromMovieType" :key="item.value" :label="item.label" :value="item.label" > </el-option>
                         </el-select>
                     </el-col>
                     <el-col :span="4">
-                        <span style="margin:10px 0;float:right">出品方国家或地区：</span>
+                        <span style="margin:5px 0;float:right">出品方国家或地区：</span>
                     </el-col>
                     <el-col  :span="4" >
-                        <el-select v-model="listQuery.movieCountry" filterable placeholder="请选择">
+                        <el-select v-model="listQuery.movieCountry" filterable placeholder="请选择" size="small">
                             <el-option v-for="item in optionsFromMovieCountry" :key="item.value" :label="`${item.value}-${item.label}`" :value="item.value"> </el-option>
                         </el-select>
                     </el-col>
                 </el-row>
                 <el-row :gutter="1">
                     <el-col :span="3">
-                        <span style="margin:10px 0;float:right">电影上映时间段：</span>
+                        <span style="margin:5px 0;float:right">电影上映时间段：</span>
                     </el-col>
-                    <el-col  :span="9" >
-                        <el-date-picker  v-model="listQuery.startTime"  style="width: 150px;" type="date"   placeholder="开始时间" value-format="timestamp" ></el-date-picker>
+                    <el-col  :span="8" >
+                        <el-date-picker  v-model="listQuery.startTime"  style="width: 190px;" type="date"   placeholder="开始时间" value-format="timestamp" size="small"></el-date-picker>
                         <span>至</span>
-                        <el-date-picker  v-model="listQuery.endTime"  style="width: 150px;" type="date"  placeholder="结束时间"  value-format="timestamp" ></el-date-picker>
+                        <el-date-picker  v-model="listQuery.endTime"  style="width: 190px;" type="date"  placeholder="结束时间"  value-format="timestamp" size="small"></el-date-picker>
                     </el-col>
-                    <el-col :span="3">
-                        <span style="margin:10px 0;float:right">评分分段：</span>
+                    <el-col :span="2" >
+                        <span style="margin:5px 0;float:right">评分分段：</span>
                     </el-col>
-                    <el-col  :span="9" >
-                        <el-input-number v-model="listQuery.startScore" class="filter-item" :precision="1" :step="0.1" :max="10" :min="0"></el-input-number>
+                    <el-col  :span="11" >
+                        <el-input-number v-model="listQuery.startScore" class="filter-item" :precision="1" :step="0.1" :max="10" :min="0" size="small"></el-input-number>
                         <span>至</span>
-                        <el-input-number v-model="listQuery.endScore"  class="filter-item" :precision="1" :step="0.1" :max="10" :min="0"></el-input-number>
+                        <el-input-number v-model="listQuery.endScore"  class="filter-item" :precision="1" :step="0.1" :max="10" :min="0" size="small"></el-input-number>
                     </el-col>
                 </el-row>
                 <el-row :gutter="1">
@@ -71,10 +71,10 @@
             <el-table-column  align="center" label="电影名字" prop="movieName" min-width='150px'></el-table-column>
             <el-table-column  align="center" label="电影别名" prop="movieName1" min-width='120px'> </el-table-column>
             <el-table-column  align="center" label="上映时间" prop="movieShowTime" min-width='100px'></el-table-column>
-            <el-table-column  align="center" label="电影评分" prop="score"></el-table-column>
-            <el-table-column align="center" label="出品方国家(地区)" min-width='200px' prop="movieCountry" :formatter="pp">
+            <el-table-column  align="center" label="电影评分" prop="score" :formatter="scoreFormatter"></el-table-column>
+            <el-table-column align="center" label="出品方国家(地区)" min-width='150px' prop="movieCountry">
                 <template slot-scope="scope">
-                    <el-tag effect="plain" :type="'success'" :key="tag.key" v-for="tag in scope.row.movieCountryList"  :disable-transitions="false" >{{tag.countryCode |pp}}</el-tag>
+                    <el-tag effect="plain" :type="'success'" :key="tag.key" v-for="tag in scope.row.movieCountryList"  :disable-transitions="false" >{{tag.countryCode | getCountry(optionsFromMovieCountry)}}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column align="center" label="类型" min-width='200px' prop="movieType">
@@ -131,6 +131,15 @@ export default {
             tagsFromMovieCountry:[],
         }
     },
+    filters:{
+        getCountry:function(value,optionsFromMovieCountry){
+            for(var i=0;i<optionsFromMovieCountry.length;i++){
+                if(optionsFromMovieCountry[i].value==value){
+                    return optionsFromMovieCountry[i].label;
+                }
+            }
+        }
+    },
     methods:{
         async queryDict(){
             await this.$store.dispatch('QueryDictByDictType',{
@@ -146,8 +155,13 @@ export default {
                 }
             )
         },
-        pp(){
-            return '10'
+        scoreFormatter(row, column, cellValue){
+            
+            if(cellValue==null||cellValue===undefined||cellValue==0){
+                return "暂无评分";
+            }else{
+                return cellValue;
+            }
         },
         queryList(){
             if((this.listQuery.endTime!=''&&this.listQuery.endTime!=null)
