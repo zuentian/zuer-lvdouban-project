@@ -8,3 +8,10 @@ export function insertMovieInfo(param){
         params: param
       });
 }
+export function queryMovieInfoByParam(param){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMovieInfoByParam',
+    method:'post',
+    params:param,
+  });
+}

@@ -78,11 +78,10 @@ export default {
     },
     methods:{
         queryExceptionInfo(){
-            console.log(this.listQuery.endTime);
             if((this.listQuery.endTime!=''&&this.listQuery.endTime!=null)
                 &&this.listQuery.endTime<this.listQuery.startTime){
                     Message({
-                        message: '开始时间必须小于结束时间！',
+                        message: '结束时间不能小于开始时间！',
                         type: 'error',
                         duration: 5 * 1000
                     });
