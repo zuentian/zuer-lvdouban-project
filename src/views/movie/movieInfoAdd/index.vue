@@ -1,8 +1,9 @@
 <template>
     <div class="app-container calendar-list-container">
-        <h1 class="page-header">添加电影</h1>
+        <h1 v-if='movieId' class="page-header">修改电影</h1>
+        <h1 v-else class="page-header">添加电影</h1>
         <el-card shadow="always" class="card">
-        <el-form ref="movieInfo" :model="movieInfo" :rules="rules"  label-width="180px" label-position="right" >
+        <el-form ref="movieInfo" :model="movieInfo" :rules="rules" v-loading="loadingInfo" label-width="180px" label-position="right" >
             <div class="well">
                 <h4>电影信息</h4>
                 <el-form-item label="电影名字" prop="movieName"><el-input v-model.trim="movieInfo.movieName"></el-input></el-form-item>
@@ -43,8 +44,10 @@
                 
                 
                 <el-form-item>
-                    <el-button type="primary" :loading="loading" @click="submitForm('movieInfo')">立即添加</el-button>
-                    <el-button @click="resetForm('movieInfo')">重置</el-button>
+                    <el-button v-if='movieId' type="primary" :loading="loading" @click="submitFormEdit('movieInfo')">立即修改</el-button>
+                    <el-button v-else type="primary" :loading="loading" @click="submitForm('movieInfo')">立即添加</el-button>
+                    <el-button  v-if='movieId' @click="close('movieInfo')">取消</el-button>
+                    <el-button  v-else @click="resetForm('movieInfo')">重置</el-button>
                 </el-form-item>
             </div>
         </el-form>
@@ -62,7 +65,7 @@
 
 <script>
 import {Message, MessageBox} from 'element-ui';
-import {insertMovieInfo} from 'api/movie/movieInfo/index.js'
+import {insertMovieInfo,queryMovieInfoById} from 'api/movie/movieInfo/index.js'
 import {queryDictByDictType} from 'api/dict/index.js'
 export default {
     data(){
@@ -79,6 +82,7 @@ export default {
             movieCountry:[],
             movieType:[],
             loading:false,
+            loadingInfo:false,
             rules: {
                 movieName: [
                     { required: true, message: '请输入电影名字', trigger: 'blur' },
@@ -94,6 +98,11 @@ export default {
             dialogVisible: false,
             dialogImageUrl: "",
             moviePicture:"",
+        }
+    },
+    props:{
+        movieId:{
+            
         }
     },
     methods:{
@@ -122,6 +131,13 @@ export default {
                 }
             });
             
+        },
+        submitFormEdit(){
+            this.resetForm();
+        },
+        close(){
+            this.$emit('closeMovieInfoEditDialog');
+            this.resetForm();
         },
         resetForm(){
             this.movieInfo={
@@ -179,8 +195,30 @@ export default {
                 }
             )
         },
+        queryMovieInfoByMovieId(id){
+            if(id){
+                queryMovieInfoById(id).then(res=>{
+                    this.loadingInfo=true;
+                    this.movieInfo=res.movieInfo
+                    if(res.movieRelNameList.length){
+                        this.movieRelName=[];
+                        for(var i=0;i<res.movieRelNameList.length;i++){
+                            this.movieRelName.push(res.movieRelNameList[i].name)
+                        }
+                    }
+                    
+                    
+                }).finally(()=>{
+                    this.loadingInfo=false;
+                })
+            }
+            
+            
+            
+        }
     },
     created(){
+        this.queryMovieInfoByMovieId(this.movieId);
         this.queryMovieDict();
     }
 }

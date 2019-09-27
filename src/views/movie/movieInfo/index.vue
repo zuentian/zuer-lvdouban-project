@@ -56,14 +56,17 @@
             
         </div>
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%" :expand-row-keys="expands" 
-                @expand-change="expandSelect" :row-key="getRowKeys">
+                @expand-change="expandSelect" :row-key="getRowKeys"
+                >
             <el-table-column type="index" width="40"> </el-table-column>
-            <el-table-column type="expand">
+            <el-table-column type="expand" >
                 <template slot-scope="props">
-                    <el-form label-position="left" inline class="demo-table-expand">
+                    <el-form label-position="left" inline class="demo-table-expand"  v-loading="expandsLoading"	>
                         <el-row>
-                            <el-col :span="2"><span align="center" style="font-weight:bold" >备注</span></el-col>
-                            <el-col :span="22"><span>{{ props.row.description }}</span></el-col>
+                            <el-col :span="2" style="margin:10px 0px"><span align="center" style="font-weight:bold;" >电影相关人物</span></el-col>
+                            <el-col :span="22">
+                                <el-tag  :type="'danger'" style="margin:5px" :key="tag.key" v-for="tag in props.row.movieRelNameList"  :disable-transitions="false" >{{tag.name}}</el-tag>
+                            </el-col>
                         </el-row>
                     </el-form>
                 </template>
@@ -72,6 +75,7 @@
             <el-table-column  align="center" label="电影别名" prop="movieName1" min-width='120px'> </el-table-column>
             <el-table-column  align="center" label="上映时间" prop="movieShowTime" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="电影评分" prop="score" :formatter="scoreFormatter"></el-table-column>
+            <el-table-column  align="center" label="电影时长(分钟)" prop="movieTime" ></el-table-column>
             <el-table-column align="center" label="出品方国家(地区)" min-width='150px' prop="movieCountry">
                 <template slot-scope="scope">
                     <el-tag effect="plain" :type="'success'" :key="tag.key" v-for="tag in scope.row.movieCountryList"  :disable-transitions="false" >{{tag.countryCode | getCountry(optionsFromMovieCountry)}}</el-tag>
@@ -84,9 +88,9 @@
             </el-table-column>
             <el-table-column align="center" label="创建时间" prop="crtTime" min-width='160px'></el-table-column>
             <el-table-column  align="center" label="最后时间" prop="updTime" min-width='160px'></el-table-column>
-            <el-table-column  align="center" label="最后更新人" prop="updName"></el-table-column>
+            <el-table-column  align="center" label="最后更新人" prop="updName" min-width='100px'></el-table-column>
 
-            <el-table-column v-if="movieInfo_btn_edit"  align="center" label="操作" width="150"> 
+            <el-table-column v-if="movieInfo_btn_edit"  align="center" label="操作" min-width='80px'> 
                 <template slot-scope="scope">
                     <el-button v-if="movieInfo_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑</el-button>
                 </template> 
@@ -97,13 +101,21 @@
         </div>
 
 
+        <el-dialog :title="dialogMovieInfoEdit" :visible.sync="dialogMovieInfoEditVisible">
+            <movie-info-edit :movieId="currentId" @closeMovieInfoEditDialog="closeMovieInfoEditDialog" ref="movieInfoEdit"></movie-info-edit>
+        </el-dialog>
+
     </div>
     
 </template>
 <script>
-import {queryMovieInfoByParam} from 'api/movie/movieInfo/index.js'
+import {queryMovieInfoByParam,queryMovieInfoById} from 'api/movie/movieInfo/index.js'
 import {  Message, MessageBox } from 'element-ui';
+var that;//定义一个全局变量
 export default {
+    components: {
+        'movie-info-edit': () => import('views/movie/movieInfoAdd/index'),
+    },
     data(){
         return{
             listQuery:{
@@ -118,18 +130,26 @@ export default {
                 movieType:null,
             },
             listLoading:false,
+            expandsLoading:false,
             list:[],
             movieInfo_btn_edit:true,
             total:0,
             expands:[],
             optionsFromMovieType:null,
-            optionsFromMovieCountry:null,
+            optionsFromMovieCountry:'',
             getRowKeys(row){
                 return row.id;
             },
             tagsFromMovieType:[],
             tagsFromMovieCountry:[],
+            movieDescription:'',
+            dialogMovieInfoEdit:'',
+            dialogMovieInfoEditVisible:false,
+            currentId:'',
         }
+    },
+    beforeCreate: function () {
+        that = this;
     },
     filters:{
         getCountry:function(value,optionsFromMovieCountry){
@@ -138,7 +158,7 @@ export default {
                     return optionsFromMovieCountry[i].label;
                 }
             }
-        }
+        },
     },
     methods:{
         async queryDict(){
@@ -212,20 +232,32 @@ export default {
         handleCurrentChange(){
             this.listQuery.page=val;
         },
-        expandSelect(row, expandedRows) {
-            var that = this
-            if (expandedRows.length) {
-                that.expands = []
-                if (row) {
-                that.expands.push(row.id)// 每次push进去的是每行的ID
-                }
-            } else {
-                that.expands = []// 默认不展开
+        closeMovieInfoEditDialog(){
+            this.dialogMovieInfoEditVisible=false;
+            if (this.$refs.movieInfoEdit !== undefined) {
+               this.$refs.movieInfoEdit.resetForm();
             }
         },
-        formatterCountry(row){
-
+        //展示的时候只是默认展示一行，其他行关闭
+        expandSelect(row, expandedRows) { 
+            
+            if (expandedRows.length) {
+                this.expands = []
+                if (row) {
+                    this.expands.push(row.id)// 每次push进去的是每行的ID
+                }
+            } else {
+                this.expands = []// 默认不展开
+            }
+        },
+        handleUpdate(row){
+            this.currentId=row.id;
+            this.dialogMovieInfoEditVisible=true;
+            if (this.$refs.movieInfoEdit !== undefined) {
+               this.$refs.movieInfoEdit.queryMovieInfoByMovieId(this.currentId);
+            }
         }
+        
     },
     created(){
         this.queryDict();

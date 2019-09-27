@@ -15,3 +15,10 @@ export function queryMovieInfoByParam(param){
     params:param,
   });
 }
+
+export function queryMovieInfoById(id){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMovieInfoById/'+id,
+    method:'get',
+  })
+}
