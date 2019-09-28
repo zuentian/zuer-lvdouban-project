@@ -22,3 +22,11 @@ export function queryMovieInfoById(id){
     method:'get',
   })
 }
+
+export function updateMovieInfo(param){
+  return fetch({
+    url: '/movie/MovieInfoController/updateMovieInfo',
+    method: 'post',
+    params: param
+  });
+}

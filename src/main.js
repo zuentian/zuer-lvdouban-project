@@ -59,8 +59,10 @@ router.beforeEach((to,from,next)=>{
       //   if (hasPermission(store.getters.roles, to.meta.role)) {
       //     next();//
       //   } else {
+        console.log(to);
         if (to.matched.length === 0) { //当token等信息存在的情况下，输入错误的路由网址，会判断离开的网址，跳转回去
-            from.path ? next({
+          console.log("from.path",from.path);  
+          from.path ? next({
               path: from.path
             }) : next('/404'); 
         } else {

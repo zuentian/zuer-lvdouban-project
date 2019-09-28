@@ -9,7 +9,7 @@
                 <el-form-item label="电影名字" prop="movieName"><el-input v-model.trim="movieInfo.movieName"></el-input></el-form-item>
                 <el-form-item label="电影其他名字1" prop="movieEnglishName1"><el-input v-model.trim="movieInfo.movieName1"></el-input></el-form-item>
                 <el-form-item label="电影其他名字2" prop="movieEnglishName2"><el-input v-model.trim="movieInfo.movieName2"></el-input></el-form-item>
-                <el-form-item label="电影时长" prop="movieTime"><el-input-number v-model="movieInfo.movieTime" :step="10" :min=0 placeholder="分钟"></el-input-number></el-form-item>
+                <el-form-item label="电影时长(分钟)" prop="movieTime"><el-input-number v-model="movieInfo.movieTime" :step="10" :min=0 placeholder="分钟"></el-input-number></el-form-item>
                 <el-form-item label="电影出品方国家或地区" prop="movieCountry">
                     <el-select style="width:100%" v-model="movieCountry" multiple placeholder="请选择国家地区">
                         <el-option v-for="item in selectMovieCountrys" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -65,7 +65,7 @@
 
 <script>
 import {Message, MessageBox} from 'element-ui';
-import {insertMovieInfo,queryMovieInfoById} from 'api/movie/movieInfo/index.js'
+import {insertMovieInfo,queryMovieInfoById,updateMovieInfo} from 'api/movie/movieInfo/index.js'
 import {queryDictByDictType} from 'api/dict/index.js'
 export default {
     data(){
@@ -132,8 +132,29 @@ export default {
             });
             
         },
-        submitFormEdit(){
-            this.resetForm();
+        submitFormEdit(formName){
+             const vals = {};
+            vals.movieRelName=this.movieRelName.join();
+            vals.movieInfo=this.movieInfo;
+            vals.movieCountry=this.movieCountry.join();
+            vals.movieType=this.movieType.join();
+            
+            this.loading=true;
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    updateMovieInfo(vals).then(res=>{
+                        this.$notify({ title:'成功', message:'修改成功', type:'success', duration:2000 });
+                        this.close();
+                    }).finally(()=>{
+                        this.loading=false;
+                    })
+                } else {
+                    Message({message: '信息未填写完整！', type: 'error', duration: 5 * 1000 });
+                    this.loading = false
+                    return false;
+                }
+            });
+
         },
         close(){
             this.$emit('closeMovieInfoEditDialog');
@@ -174,7 +195,6 @@ export default {
         },
         addMovieRelName() {
             this.movieRelName.push('');
-            console.log("this.movieRelName",this.movieRelName);
             if(this.movieRelName.length>1){
                 this.isDisabled=false;
             }
@@ -200,21 +220,37 @@ export default {
                 queryMovieInfoById(id).then(res=>{
                     this.loadingInfo=true;
                     this.movieInfo=res.movieInfo
-                    if(res.movieRelNameList.length){
+                    this.movieInfo.movieShowTime=res.movieShowTime;//上映时间赋值
+                    if(res.movieRelNameList.length){//电影相关人物
                         this.movieRelName=[];
                         for(var i=0;i<res.movieRelNameList.length;i++){
-                            this.movieRelName.push(res.movieRelNameList[i].name)
+                            if(res.movieRelNameList[i].name==null||res.movieRelNameList[i].name===undefined){
+                                this.movieRelName.push('未知');
+                            }else{
+                                this.movieRelName.push(res.movieRelNameList[i].name);
+                            }
+                            
                         }
                     }
                     
+                    if(res.movieTypeList.length){//电影类型
+                        this.movieType=[];
+                        for(var i=0;i<res.movieTypeList.length;i++){
+                            this.movieType.push(res.movieTypeList[i].type)
+                        }
+                    }
                     
-                }).finally(()=>{
+                    if(res.movieCountryList.length){//电影国家和地区
+                        this.movieCountry=[];
+                        for(var i=0;i<res.movieCountryList.length;i++){
+                            this.movieCountry.push(res.movieCountryList[i].countryCode)
+                        }
+                    }
+                    
                     this.loadingInfo=false;
+                }).finally(()=>{
                 })
             }
-            
-            
-            
         }
     },
     created(){

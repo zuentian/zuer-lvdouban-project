@@ -13,7 +13,7 @@
                         <span style="margin:5px 0;float:right">电影类型：</span>
                     </el-col>
                     <el-col  :span="4" >
-                        <el-select v-model="listQuery.movieType" filterable placeholder="请选择" size="small">
+                        <el-select v-model="listQuery.movieType" clearable  filterable placeholder="请选择" size="small">
                             <el-option v-for="item in optionsFromMovieType" :key="item.value" :label="item.label" :value="item.label" > </el-option>
                         </el-select>
                     </el-col>
@@ -21,7 +21,7 @@
                         <span style="margin:5px 0;float:right">出品方国家或地区：</span>
                     </el-col>
                     <el-col  :span="4" >
-                        <el-select v-model="listQuery.movieCountry" filterable placeholder="请选择" size="small">
+                        <el-select v-model="listQuery.movieCountry" clearable filterable placeholder="请选择" size="small">
                             <el-option v-for="item in optionsFromMovieCountry" :key="item.value" :label="`${item.value}-${item.label}`" :value="item.value"> </el-option>
                         </el-select>
                     </el-col>
@@ -56,7 +56,7 @@
             
         </div>
         <el-table :data="list" v-loading.body="listLoading" border fit highlight-current-row style="width: 100%" :expand-row-keys="expands" 
-                @expand-change="expandSelect" :row-key="getRowKeys"
+                @expand-change="expandSelect" :row-key="getRowKeys" @row-dblclick="checkMovieInfoDetail"
                 >
             <el-table-column type="index" width="40"> </el-table-column>
             <el-table-column type="expand" >
@@ -101,8 +101,8 @@
         </div>
 
 
-        <el-dialog :title="dialogMovieInfoEdit" :visible.sync="dialogMovieInfoEditVisible">
-            <movie-info-edit :movieId="currentId" @closeMovieInfoEditDialog="closeMovieInfoEditDialog" ref="movieInfoEdit"></movie-info-edit>
+        <el-dialog close-on-press-escape :title="dialogMovieInfoEdit" :visible.sync="dialogMovieInfoEditVisible"  :before-close="handleClose"	 width="60%" top='0'>
+            <movie-info-edit  :movieId="currentId" @closeMovieInfoEditDialog="closeMovieInfoEditDialog" ref="movieInfoEdit"></movie-info-edit>
         </el-dialog>
 
     </div>
@@ -237,6 +237,8 @@ export default {
             if (this.$refs.movieInfoEdit !== undefined) {
                this.$refs.movieInfoEdit.resetForm();
             }
+            this.expands = []//编辑后默认不展开
+            this.queryList();
         },
         //展示的时候只是默认展示一行，其他行关闭
         expandSelect(row, expandedRows) { 
@@ -256,6 +258,24 @@ export default {
             if (this.$refs.movieInfoEdit !== undefined) {
                this.$refs.movieInfoEdit.queryMovieInfoByMovieId(this.currentId);
             }
+        },
+        
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+            .then(_ => {
+                done();
+                //this.dialogMovieInfoEditVisible=false;
+                if (this.$refs.movieInfoEdit !== undefined) {
+                    this.$refs.movieInfoEdit.resetForm();
+                }
+            })
+            .catch(_ => {});
+            
+        },
+        checkMovieInfoDetail(row, column, event){
+            //this.$router.push({path: "/movie/movieInfo",
+                //query:{ id: row.id  }
+            //});
         }
         
     },
