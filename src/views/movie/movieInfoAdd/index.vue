@@ -98,6 +98,7 @@ export default {
             dialogVisible: false,
             dialogImageUrl: "",
             moviePicture:"",
+            fileData:[],
         }
     },
     props:{
@@ -108,17 +109,29 @@ export default {
     methods:{
 
         submitForm(formName){
+            this.fileData=[];
             const vals = {}
             vals.movieRelName=this.movieRelName.join();
             vals.movieInfo=this.movieInfo;
             vals.movieCountry=this.movieCountry.join();
             vals.movieType=this.movieType.join();
+
+            //上传文件
+            this.$refs.upload.submit();
+            console.log(this.fileData);
             
+            vals.files=this.fileData;
+            console.log("vals",vals);
             this.loading=true;
+
+            let config = {
+                'Content-Type':'multipart/form-data'
+            };
+
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     
-                    insertMovieInfo(vals).then(res=>{
+                    insertMovieInfo(vals,config).then(res=>{
                         this.$notify({ title:'成功', message:'添加成功', type:'success', duration:2000 });
                         this.resetForm();
                     }).finally(()=>{
@@ -184,8 +197,9 @@ export default {
         changeMoviePicture(){
 
         },
-        uploadFile(){
-
+        uploadFile(params){
+            // 文件上传
+            this.fileData.push(params.file);
         },
         removeMovieRelName(item,index) {
             this.movieRelName.splice(index, 1)

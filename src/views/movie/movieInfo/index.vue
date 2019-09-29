@@ -90,9 +90,10 @@
             <el-table-column  align="center" label="最后时间" prop="updTime" min-width='160px'></el-table-column>
             <el-table-column  align="center" label="最后更新人" prop="updName" min-width='100px'></el-table-column>
 
-            <el-table-column v-if="movieInfo_btn_edit"  align="center" label="操作" min-width='80px'> 
+            <el-table-column v-if="movieInfo_btn_edit||movieInfo_btn_del"  align="center" label="操作" min-width='160px'> 
                 <template slot-scope="scope">
                     <el-button v-if="movieInfo_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑</el-button>
+                    <el-button v-if="movieInfo_btn_del" size="small"  type="danger"  @click="handleDelete(scope.row)">删除</el-button>
                 </template> 
             </el-table-column>
         </el-table>
@@ -109,7 +110,7 @@
     
 </template>
 <script>
-import {queryMovieInfoByParam,queryMovieInfoById} from 'api/movie/movieInfo/index.js'
+import {queryMovieInfoByParam,queryMovieInfoById,deleteMovieInfoById} from 'api/movie/movieInfo/index.js'
 import {  Message, MessageBox } from 'element-ui';
 var that;//定义一个全局变量
 export default {
@@ -133,6 +134,7 @@ export default {
             expandsLoading:false,
             list:[],
             movieInfo_btn_edit:true,
+            movieInfo_btn_del:true,
             total:0,
             expands:[],
             optionsFromMovieType:null,
@@ -228,9 +230,11 @@ export default {
         },
         handleSizeChange(val){
             this.listQuery.limit=val;
+            this.queryList();
         },
         handleCurrentChange(){
             this.listQuery.page=val;
+            this.queryList();
         },
         closeMovieInfoEditDialog(){
             this.dialogMovieInfoEditVisible=false;
@@ -272,12 +276,30 @@ export default {
             .catch(_ => {});
             
         },
-        checkMovieInfoDetail(row, column, event){
-            //this.$router.push({path: "/movie/movieInfo",
-                //query:{ id: row.id  }
-            //});
+        checkMovieInfoDetail(row, column, event){//跳转到详情页面
+            this.$router.push({path: `/movie/movieDetail/${row.id}`
+            });
+        },
+        handleDelete(row){
+            this.$confirm('此操作将会永久删除电影信息，请再次确认是否删除？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '删除',
+                        cancelButtonText: '放弃删除'
+            }).then(() => {
+                deleteMovieInfoById(row.id).then((res)=>{
+                    this.queryList();
+                    this.$notify({title: '删除成功',message: '',type: 'success'});
+                }).catch(err=>{
+                })
+            }).catch(action => {
+                this.$message({
+                    type: 'info',
+                    message: action === 'cancel'
+                    ? '放弃删除并离开页面'
+                    : '停留在当前页面'
+                })
+            });
         }
-        
     },
     created(){
         this.queryDict();

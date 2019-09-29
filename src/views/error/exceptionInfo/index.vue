@@ -97,9 +97,11 @@ export default {
         },
         handleSizeChange(val){
             this.listQuery.pageSize=val;
+            this.queryExceptionInfo();
         },
-        handleCurrentChange(){
+        handleCurrentChange(val){
             this.listQuery.currentPage=val
+            this.queryExceptionInfo();
         },
         showDetail(row){
             this.dialogFormVisible=true;

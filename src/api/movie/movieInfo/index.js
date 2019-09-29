@@ -1,12 +1,13 @@
 import fetch from 'utils/fetch';
 
 
-export function insertMovieInfo(param){
-    return fetch({
-        url: '/movie/MovieInfoController/insertMovieInfo',
-        method: 'post',
-        params: param
-      });
+export function insertMovieInfo(param,config){
+  return fetch({
+      url: '/movie/MovieInfoController/insertMovieInfo',
+      method: 'post',
+      params:param,
+      data:config
+  });
 }
 export function queryMovieInfoByParam(param){
   return fetch({
@@ -29,4 +30,19 @@ export function updateMovieInfo(param){
     method: 'post',
     params: param
   });
+}
+
+export function queryMovieDetailById(id){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMovieDetailById/'+id,
+    method:'get'
+  })
+}
+
+
+export function deleteMovieInfoById(id){
+  return fetch({
+    url:'/movie/MovieInfoController/deleteMovieInfoById/'+id,
+    method:'get'
+  })
 }
