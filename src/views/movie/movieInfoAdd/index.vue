@@ -30,7 +30,7 @@
 
                 <el-form-item label="电影简介" prop="movieDescription"><el-input type="textarea"  placeholder=""  :autosize="{ minRows: 5, maxRows: 10}" v-model="movieInfo.movieDescription"></el-input></el-form-item>
                 
-                <el-form-item label="电影海报和剧照" >
+                <el-form-item label="电影剧照" >
                     <el-upload class="upload-moviePicture"  action=""  multiple  list-type="picture-card"  ref="upload" 
                         :on-preview="handlePictureCardPreview" 
                         :on-remove="handleRemove"
@@ -65,7 +65,7 @@
 
 <script>
 import {Message, MessageBox} from 'element-ui';
-import {insertMovieInfo,queryMovieInfoById,updateMovieInfo} from 'api/movie/movieInfo/index.js'
+import {insertMovieInfo,queryMovieInfoById,updateMovieInfo,insertMovieInfoPictureStage} from 'api/movie/movieInfo/index.js'
 import {queryDictByDictType} from 'api/dict/index.js'
 export default {
     data(){
@@ -116,24 +116,28 @@ export default {
             vals.movieCountry=this.movieCountry.join();
             vals.movieType=this.movieType.join();
 
-            //上传文件
-            this.$refs.upload.submit();
-            console.log(this.fileData);
-            
-            vals.files=this.fileData;
-            console.log("vals",vals);
             this.loading=true;
-
-            let config = {
-                'Content-Type':'multipart/form-data'
-            };
-
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    
-                    insertMovieInfo(vals,config).then(res=>{
-                        this.$notify({ title:'成功', message:'添加成功', type:'success', duration:2000 });
-                        this.resetForm();
+                    insertMovieInfo(vals).then(res=>{
+                        if(res){
+                            //上传文件
+                            this.$refs.upload.submit();
+                            
+                            var fileFormData = new FormData();//传文件要建立FormData对象
+                            //fileFormData.set("files",this.fileData);
+                            //将上传文件封装在formData
+                            for(var i=0;i<this.fileData.length;i++){
+                                fileFormData.append('files',this.fileData[i]);
+                            }
+                            fileFormData.append('id',res);
+                            //传文件的时候，数据要放在data里面，放在params里面出无法自动修改headers的Content-Type:multipart/form-data
+                            insertMovieInfoPictureStage(fileFormData).then(res=>{
+                                this.$notify({ title:'成功', message:'添加成功', type:'success', duration:2000 });
+                                this.resetForm();
+                            }).finally(()=>{
+                            })
+                        }
                     }).finally(()=>{
                         this.loading=false;
                     })

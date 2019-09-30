@@ -76,6 +76,17 @@
             </el-row>
         </el-card>
         <el-card >
+            <div class="grid-content bg-purple">
+                <h3>{{movieInfo.movieName}}的电影海报和剧照(<router-link :to="{path:'/moviePicture/'+this.movieInfo.id}">全部图片{{moviePictureInfoBaseCount}}张</router-link>)：</h3>
+            </div>
+            <el-carousel v-if="moviePictureInfoBaseCount>0" :interval="4000"  type="card" height="400px">
+                  <el-carousel-item v-for="(item,index) in moviePictureInfo" :key="index">
+                  <h3 align="center">{{ item.fileName}}</h3>
+                  <img style="width: 100%; height: auto;" :src="item.fileUrl" class="image">
+                  </el-carousel-item>
+            </el-carousel>
+        </el-card>
+        <el-card >
             <h3>{{movieInfo.movieName}}的短评 · · · · · ·</h3>
         </el-card>
 
@@ -88,6 +99,7 @@ export default {
     data(){
         return{
             movieInfo:{
+                id:'',
                 movieName:'',
                 movieDescription:'',
                 score:0,
@@ -102,6 +114,8 @@ export default {
             showNoScore:true,
             showScore:false,
             showNoTime:false,
+            moviePictureInfo:null,
+            moviePictureInfoBaseCount:0,
         }
     },
     methods:{
@@ -141,6 +155,8 @@ export default {
                         }
                     }
                 }
+                this.moviePictureInfo=res.moviePictureInfoList;
+                this.moviePictureInfoBaseCount=res.moviePictureCount;
             })
         },
         getMovieCountry(code){

@@ -76,7 +76,7 @@
             <el-table-column  align="center" label="上映时间" prop="movieShowTime" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="电影评分" prop="score" :formatter="scoreFormatter"></el-table-column>
             <el-table-column  align="center" label="电影时长(分钟)" prop="movieTime" ></el-table-column>
-            <el-table-column align="center" label="出品方国家(地区)" min-width='150px' prop="movieCountry">
+            <el-table-column align="center" label="出品方国家(地区)" min-width='220px' prop="movieCountry">
                 <template slot-scope="scope">
                     <el-tag effect="plain" :type="'success'" :key="tag.key" v-for="tag in scope.row.movieCountryList"  :disable-transitions="false" >{{tag.countryCode | getCountry(optionsFromMovieCountry)}}</el-tag>
                 </template>
@@ -180,7 +180,13 @@ export default {
         scoreFormatter(row, column, cellValue){
             
             if(cellValue==null||cellValue===undefined||cellValue==0){
-                return "暂无评分";
+                var dateNow=new Date();
+                var date = new Date(row.movieShowTime.replace(/-/,"/"))
+                if(date>dateNow){
+                    return "暂未上映";
+                }else{
+                    return "暂无评分";
+                }
             }else{
                 return cellValue;
             }
