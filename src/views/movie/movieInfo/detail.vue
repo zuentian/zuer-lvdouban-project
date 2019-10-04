@@ -27,31 +27,51 @@
                         <span >{{movieInfo.movieTime}}分钟</span>
                     </div>
                 </el-col>
-                <el-col :span="1">
+                <el-col :span="1" >
                     <el-divider direction="vertical"></el-divider>
                 </el-col>
                 <el-col :span="10">
                     <span>豆瓣评分</span>
                     <el-row>
-                        <el-col :span="12" v-if='movieInfo.score>0'>
-                            {{movieInfo.score}}
+                        <el-col :span="2" v-if='movieInfo.score>0'>
+                            <h1>{{scoreBig}}</h1>
                         </el-col >
-                        <el-col :span="12">
-                            <el-rate v-model="movieInfo.score" disabled  text-color="#ff9900" ></el-rate>
+                        <el-col :span="6" style="margin:7px 0px" >
+                            <el-rate v-model="movieInfo.score" disabled></el-rate>
+                            <span v-if='movieInfo.score>0'>{{movieInfo.personScoreCount}}人评价</span>
                         </el-col>
                     </el-row>
-                    <div v-if='showNoScore==true'>暂无评分</div>
-                    <div v-if='showScore==true'></div>
-                    <div v-if='showNoTime==true'>暂未上映</div>
+                    <div  v-if='movieInfo.score>0'>
+                        <el-row>
+                            <el-col :span="2" ><span>5星</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="2" ><span>4星</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="2" ><span>3星</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="2" ><span>2星</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="2" ><span>1星</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        </el-row>
+                    </div>
+                    <div v-if='showNoScore==true&&(movieInfo.score<=0)'>暂无评分</div>
+                    <div v-if='showNoTime==true'>尚未上映</div>
                 </el-col>
             </el-row>
 
         </el-card>
         <el-card>
-            
-
+            <movie-user :movieId="movieInfo.id" @queryMovieInfoList='queryMovie'></movie-user>
         </el-card>
-
         <el-card >
             <h3>{{movieInfo.movieName}}的剧情简介 · · · · · ·</h3>
             <span>
@@ -77,12 +97,13 @@
         </el-card>
         <el-card >
             <div class="grid-content bg-purple">
-                <h3>{{movieInfo.movieName}}的电影海报和剧照(<router-link :to="{path:'/moviePicture/'+this.movieInfo.id}">全部图片{{moviePictureInfoBaseCount}}张</router-link>)：</h3>
+                <h3>{{movieInfo.movieName}}的电影海报和剧照(<router-link style="color:#6340e6" :to="{path:'/movie/moviePicture/'+this.movieInfo.id}">全部图片{{moviePictureInfoBaseCount}}张</router-link>)：</h3>
             </div>
             <el-carousel v-if="moviePictureInfoBaseCount>0" :interval="4000"  type="card" height="400px">
                   <el-carousel-item v-for="(item,index) in moviePictureInfo" :key="index">
                   <h3 align="center">{{ item.fileName}}</h3>
-                  <img style="width: 100%; height: auto;" :src="item.fileUrl" class="image">
+                  <el-image style="width: 400px; height:400px;margin:0px 100px;"  :src="item.fileUri" fit='contain'></el-image>
+                  <!-- <img style="width: 100%; height: auto;" :src="item.fileUri" class="image"> -->
                   </el-carousel-item>
             </el-carousel>
         </el-card>
@@ -93,16 +114,17 @@
     </div>
 </template>
 <script>
-import {queryMovieInfoById} from 'api/movie/movieInfo/index.js';
-
+import {queryMovieInfoById,queryMoviePictureInfoByMovieIdFromSix} from 'api/movie/movieInfo/index.js';
+import MovieUser from './movieUser.vue'
 export default {
     data(){
         return{
             movieInfo:{
-                id:'',
+                id:this.$route.params.id,
                 movieName:'',
                 movieDescription:'',
                 score:0,
+                personScoreCount:0
             },
             titleMovieYear:'',
             movieOtherName:'',
@@ -112,16 +134,24 @@ export default {
             rondomColor:'',
             optionsFromMovieCountry:'',
             showNoScore:true,
-            showScore:false,
             showNoTime:false,
             moviePictureInfo:null,
             moviePictureInfoBaseCount:0,
+            scoreBig:'',
         }
+    },
+    components: { 
+        MovieUser 
     },
     methods:{
         queryMovie(id){
             queryMovieInfoById(id).then(res=>{
                 this.movieInfo=res.movieInfo;
+                this.scoreBig=this.movieInfo.score;
+                if(this.movieInfo.score==null){
+                    this.movieInfo.score="0";
+                }
+                this.movieInfo.score=parseFloat(this.movieInfo.score)/2;
                 this.movieRelNameList=res.movieRelNameList;
                 var date = new Date(res.movieShowTime);
                 this.titleMovieYear=date.getFullYear();
@@ -155,6 +185,9 @@ export default {
                         }
                     }
                 }
+               
+            })
+            queryMoviePictureInfoByMovieIdFromSix(id).then(res=>{
                 this.moviePictureInfo=res.moviePictureInfoList;
                 this.moviePictureInfoBaseCount=res.moviePictureCount;
             })
@@ -182,5 +215,12 @@ export default {
 }
 </script>
 <style scoped>
-
+.el-divider--vertical {
+    display: inline-block;
+    width: 1px;
+    height: 12em;
+    margin: 0 8px;
+    vertical-align: middle;
+    position: relative;
+}
 </style>

@@ -13,6 +13,7 @@ const getters={
     routerTrees:state=>state.user.routerTrees,
     elements:state=>state.user.elements,
     nameBak:state=>state.user.nameBak,
+    movieName:state=>state.movie.movieName,
 }
 
 export default getters

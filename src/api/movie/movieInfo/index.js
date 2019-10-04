@@ -23,6 +23,12 @@ export function queryMovieInfoById(id){
   })
 }
 
+export function queryMovieBaseInfoById(id){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMovieBaseInfoById/'+id,
+    method:'get',
+  })
+}
 export function updateMovieInfo(param){
   return fetch({
     url: '/movie/MovieInfoController/updateMovieInfo',
@@ -51,5 +57,28 @@ export function insertMovieInfoPictureStage(param){
     url:'/movie/MovieInfoController/insertMovieInfoPictureStage',
     method:'post',
     data:param
+  })
+}
+export function queryMoviePictureInfoByMovieIdFromSix(id){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMoviePictureInfoByMovieIdFromSix/'+id,
+    method:'get'
+  })
+}
+
+
+export function queryMoviePictureByParam(param){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMoviePictureByParam',
+    method:'get',
+    params:param
+  })
+}
+
+
+export function deletePictureById(id){
+  return fetch({
+    url:'/movie/MovieInfoController/deletePictureById/'+id,
+    method:'get'
   })
 }

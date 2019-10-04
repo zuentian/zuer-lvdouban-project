@@ -41,8 +41,6 @@
                     </el-upload>
                     <el-dialog  :title="moviePicture" :visible.sync="dialogVisible" size="tiny"><img width="100%" :src="dialogImageUrl" alt=""></el-dialog>
                 </el-form-item>
-                
-                
                 <el-form-item>
                     <el-button v-if='movieId' type="primary" :loading="loading" @click="submitFormEdit('movieInfo')">立即修改</el-button>
                     <el-button v-else type="primary" :loading="loading" @click="submitForm('movieInfo')">立即添加</el-button>
@@ -121,22 +119,9 @@ export default {
                 if (valid) {
                     insertMovieInfo(vals).then(res=>{
                         if(res){
-                            //上传文件
-                            this.$refs.upload.submit();
-                            
-                            var fileFormData = new FormData();//传文件要建立FormData对象
-                            //fileFormData.set("files",this.fileData);
-                            //将上传文件封装在formData
-                            for(var i=0;i<this.fileData.length;i++){
-                                fileFormData.append('files',this.fileData[i]);
-                            }
-                            fileFormData.append('id',res);
-                            //传文件的时候，数据要放在data里面，放在params里面出无法自动修改headers的Content-Type:multipart/form-data
-                            insertMovieInfoPictureStage(fileFormData).then(res=>{
-                                this.$notify({ title:'成功', message:'添加成功', type:'success', duration:2000 });
-                                this.resetForm();
-                            }).finally(()=>{
-                            })
+                            this.insertUploadFile(res);
+                            this.$notify({ title:'成功', message:'添加成功', type:'success', duration:2000 });
+                            this.resetForm();
                         }
                     }).finally(()=>{
                         this.loading=false;
@@ -149,8 +134,27 @@ export default {
             });
             
         },
+        insertUploadFile(id){
+            this.fileData=[];
+            //上传文件
+            this.$refs.upload.submit();
+            
+            var fileFormData = new FormData();//传文件要建立FormData对象
+            //fileFormData.set("files",this.fileData);
+            //将上传文件封装在formData
+            for(var i=0;i<this.fileData.length;i++){
+                fileFormData.append('files',this.fileData[i]);
+            }
+            fileFormData.append('id',id);
+            //传文件的时候，数据要放在data里面，放在params里面出无法自动修改headers的Content-Type:multipart/form-data
+            insertMovieInfoPictureStage(fileFormData).then(res=>{
+                this.$refs.upload.clearFiles();//清空图片
+            }).finally(()=>{
+            })
+        },
         submitFormEdit(formName){
-             const vals = {};
+            
+            const vals = {};
             vals.movieRelName=this.movieRelName.join();
             vals.movieInfo=this.movieInfo;
             vals.movieCountry=this.movieCountry.join();
@@ -160,8 +164,10 @@ export default {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     updateMovieInfo(vals).then(res=>{
+                        this.insertUploadFile(this.movieInfo.id);
                         this.$notify({ title:'成功', message:'修改成功', type:'success', duration:2000 });
                         this.close();
+                        
                     }).finally(()=>{
                         this.loading=false;
                     })
@@ -190,10 +196,12 @@ export default {
             this.movieCountry=[];
             this.movieType=[];
             this.isDisabled=true;
-            this.$refs.upload.clearFiles();//清空图片
+            
         },
-        handlePictureCardPreview(){
-
+        handlePictureCardPreview(file){
+            this.dialogImageUrl = file.url;
+            this.dialogVisible = true;
+            this.moviePicture=file.name;
         },
         handleRemove(){
 

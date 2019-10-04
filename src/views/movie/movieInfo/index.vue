@@ -183,7 +183,7 @@ export default {
                 var dateNow=new Date();
                 var date = new Date(row.movieShowTime.replace(/-/,"/"))
                 if(date>dateNow){
-                    return "暂未上映";
+                    return "尚未上映";
                 }else{
                     return "暂无评分";
                 }
@@ -283,6 +283,7 @@ export default {
             
         },
         checkMovieInfoDetail(row, column, event){//跳转到详情页面
+            this.$store.dispatch('SetMovieName',row.movieName);
             this.$router.push({path: `/movie/movieDetail/${row.id}`
             });
         },
