@@ -75,6 +75,9 @@
             <el-table-column  align="center" label="电影别名" prop="movieName1" min-width='120px'> </el-table-column>
             <el-table-column  align="center" label="上映时间" prop="movieShowTime" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="电影评分" prop="score" :formatter="scoreFormatter"></el-table-column>
+            <el-table-column  align="center" label="看过人数" prop="watchAfterNumber" ></el-table-column>
+            <el-table-column  align="center" label="想看人数" prop="watchBeforeNumber" ></el-table-column>
+            <el-table-column  align="center" label="评论人数" prop="personScoreCount" ></el-table-column>
             <el-table-column  align="center" label="电影时长(分钟)" prop="movieTime" ></el-table-column>
             <el-table-column align="center" label="出品方国家(地区)" min-width='220px' prop="movieCountry">
                 <template slot-scope="scope">

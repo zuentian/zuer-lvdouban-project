@@ -70,7 +70,7 @@ export function queryMoviePictureInfoByMovieIdFromSix(id){
 export function queryMoviePictureByParam(param){
   return fetch({
     url:'/movie/MovieInfoController/queryMoviePictureByParam',
-    method:'get',
+    method:'POST',
     params:param
   })
 }

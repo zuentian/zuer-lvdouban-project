@@ -32,35 +32,19 @@
                 </el-col>
                 <el-col :span="10">
                     <span>豆瓣评分</span>
-                    <el-row>
-                        <el-col :span="2" v-if='movieInfo.score>0'>
+                    <el-row :gutter="20">
+                        <el-col :span="3" v-if='movieInfo.score>0'>
                             <h1>{{scoreBig}}</h1>
                         </el-col >
-                        <el-col :span="6" style="margin:7px 0px" >
+                        <el-col :span="12" style="margin:7px 0px" >
                             <el-rate v-model="movieInfo.score" disabled></el-rate>
                             <span v-if='movieInfo.score>0'>{{movieInfo.personScoreCount}}人评价</span>
                         </el-col>
                     </el-row>
                     <div  v-if='movieInfo.score>0'>
-                        <el-row>
-                            <el-col :span="2" ><span>5星</span></el-col >
-                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="2" ><span>4星</span></el-col >
-                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="2" ><span>3星</span></el-col >
-                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="2" ><span>2星</span></el-col >
-                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
-                        </el-row>
-                        <el-row>
-                            <el-col :span="2" ><span>1星</span></el-col >
-                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="10.9"></el-progress></el-col>
+                        <el-row v-for="item in scoreSectionCount" :key="item.key" :span="12">
+                            <el-col :span="2" ><span>{{item.score}}</span></el-col >
+                            <el-col :span="10" style="margin:4px 0px"><el-progress :percentage="item.percentage"></el-progress></el-col>
                         </el-row>
                     </div>
                     <div v-if='showNoScore==true&&(movieInfo.score<=0)'>暂无评分</div>
@@ -108,14 +92,16 @@
             </el-carousel>
         </el-card>
         <el-card >
-            <h3>{{movieInfo.movieName}}的短评 · · · · · ·</h3>
+            <movie-user-short-command :movieId="movieInfo.id" :movieName="movieInfo.movieName" ref="movieUserShortCommand"></movie-user-short-command>
         </el-card>
 
     </div>
 </template>
 <script>
-import {queryMovieInfoById,queryMoviePictureInfoByMovieIdFromSix} from 'api/movie/movieInfo/index.js';
+import {queryMovieInfoById,queryMoviePictureInfoByMovieIdFromSix,} from 'api/movie/movieInfo/index.js';
+import {queryMovieScoreInfo} from 'api/movie/movieUser/index.js';
 import MovieUser from './movieUser.vue'
+import MovieUserShortCommand from './movieUserShortCommand.vue'
 export default {
     data(){
         return{
@@ -138,10 +124,12 @@ export default {
             moviePictureInfo:null,
             moviePictureInfoBaseCount:0,
             scoreBig:'',
+            scoreSectionCount:[]
         }
     },
     components: { 
-        MovieUser 
+        MovieUser,
+        MovieUserShortCommand,
     },
     methods:{
         queryMovie(id){
@@ -191,6 +179,13 @@ export default {
                 this.moviePictureInfo=res.moviePictureInfoList;
                 this.moviePictureInfoBaseCount=res.moviePictureCount;
             })
+            queryMovieScoreInfo(id).then(res=>{
+                this.scoreSectionCount=res;
+            })
+            if (this.$refs.movieUserShortCommand!== undefined) {
+                this.$refs.movieUserShortCommand.queryList();//但新增评论或修改评论之后，也要刷新评论区的数据
+            }
+            
         },
         getMovieCountry(code){
             for(var i=0;i<this.optionsFromMovieCountry.length;i++){

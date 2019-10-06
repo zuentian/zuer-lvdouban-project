@@ -13,15 +13,15 @@
             </el-col>
         </el-row>
         <el-row v-if='movieUserInfo.state=="2"||movieUserInfo.state=="1"'>
-            <el-col style="margin:8px 0" :span="4"  v-if='movieUserInfo.state=="2"'>
+            <el-col style="margin:8px 0" :span="5"  v-if='movieUserInfo.state=="2"'>
                 <span>我看过这部电影 {{movieUserInfo.watchAfterTime}}</span>
             </el-col>
-            <el-col style="margin:8px 0" :span="4"  v-if='movieUserInfo.state=="1"'>
+            <el-col style="margin:8px 0" :span="5"  v-if='movieUserInfo.state=="1"'>
                 <span>我想看这部电影 {{movieUserInfo.watchBeforeTime}}</span>
             </el-col>
             <el-col style="margin:7px 0" :span="4">
                  <el-button size="mini" type="success" @click="update()">修改</el-button>
-                 <el-button size="mini" type="danger" @click="del()">删除</el-button>
+                 <el-button size="mini" type="danger" @click="handleDelete()">删除</el-button>
             </el-col>
         </el-row>
         <el-row v-if='movieUserInfo.state=="2"'>
@@ -39,25 +39,45 @@
         </el-row>
 
         
-    <el-dialog  :title="title" :visible.sync="dialogVisible"  width="50%" :before-close="handleClose" :loading="loading">
-      <div v-if="state=='2'">
-        <span>给个评价吧?(可选): </span>
-        <el-rate v-model="score" show-text :texts='texts'></el-rate>
-      </div>
-      <span>简短评论：</span>
-      <textarea rows="5" cols="100"  v-model="shortCommand"></textarea>
-      <span slot="footer" class="dialog-footer"><el-button type="primary" @click="submitForm()">确 定</el-button></span>
-    </el-dialog>
+        <el-dialog  :title="title" :visible.sync="dialogVisible"  width="50%" :before-close="handleClose">
+            
+            <div v-if="state=='2'">
+                <span>给个评价吧?(可选): </span>
+                <el-rate v-model="score" show-text :texts='texts'></el-rate>
+            </div>
+            <span>简短评论：</span>
+            <el-input type="textarea" v-model="shortCommand"></el-input>
+            <span slot="footer" class="dialog-footer"><el-button type="primary" @click="submitForm()">确 定</el-button></span>
+        </el-dialog>
 
+        <el-dialog  :title="title" :visible.sync="dialogVisibleEdit"  width="50%" :before-close="handleClose">
+            <el-radio v-model="state" label="1">想看</el-radio>
+            <el-radio v-model="state" label="2">看过</el-radio>
+            <div v-if="state=='2'">
+                <span>给个评价吧?(可选): </span>
+                <el-rate v-model="score" show-text :texts='texts'></el-rate>
+            </div>
+            <div>
+                <span>简短评论：</span>
+                <el-input type="textarea" v-model="shortCommand"></el-input>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="submitFormEdit()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
-import {insertMovieUser,queryMovieUserByMovieIdAndUserId} from 'api/movie/movieUser/index.js'
+import {insertMovieUser,
+        queryMovieUserByMovieIdAndUserId,
+        updateMovieUserByMovieIdAndUserId,
+        deleteMovieUserByMovieIdAndUserId} from 'api/movie/movieUser/index.js'
 export default {
     data(){
         return {
             movieUserInfo:{
+                id:'',
                 lookAfterTime:null,
                 lookBeforeTime:null,
                 score:0,
@@ -69,8 +89,8 @@ export default {
             state:"0",
             shortCommand:'',
             title:'',
-            loading:false,
             dialogVisible:false,
+            dialogVisibleEdit:false,
         }
     },
     computed: {
@@ -92,6 +112,54 @@ export default {
                 this.queryList();
                 this.$emit('queryMovieInfoList',this.movieId);
             })
+        },
+        update(){
+            this.dialogVisibleEdit=true;
+            this.state=this.movieUserInfo.state;
+            this.shortCommand=this.movieUserInfo.shortCommand;
+            this.score=this.movieUserInfo.score;
+            this.title="修改";
+        },
+        submitFormEdit(){
+            
+            updateMovieUserByMovieIdAndUserId({
+                id:this.movieUserInfo.id,
+                movieId:this.movieId,
+                userId:this.userId,
+                score:this.score,
+                shortCommand:this.shortCommand,
+                state:this.state,
+            }).then(res=>{
+                this.$notify({ title:'成功', message:'修改成功', type:'success', duration:2000 });
+                this.dialogVisibleEdit=false;
+                this.queryList();
+                this.$emit('queryMovieInfoList',this.movieId);
+            })
+        },
+        handleDelete(){
+            this.$confirm('此操作将会永久删除评论，请再次确认是否删除？', '确认信息', {
+                        distinguishCancelAndClose: true,
+                        confirmButtonText: '删除',
+                        cancelButtonText: '放弃删除'
+            }).then(() => {
+                deleteMovieUserByMovieIdAndUserId({
+                    movieId:this.movieId,
+                    userId:this.userId,
+                }).then((res)=>{
+                    this.dialogVisibleEdit=false;
+                    this.queryList();
+                    this.$emit('queryMovieInfoList',this.movieId);
+                    this.$notify({title: '删除成功',message: '',type: 'success'});
+                }).catch(err=>{
+                })
+            }).catch(action => {
+                this.$message({
+                    type: 'info',
+                    message: action === 'cancel'
+                    ? '放弃删除并离开页面'
+                    : '停留在当前页面'
+                })
+            });
         },
         queryList(){
             queryMovieUserByMovieIdAndUserId({
