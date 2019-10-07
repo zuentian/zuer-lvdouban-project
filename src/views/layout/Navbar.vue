@@ -7,11 +7,12 @@
   <tabs-view></tabs-view>
   <!-- <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log> -->
   <!-- <screenfull class='screenfull'></screenfull> --><!--全屏功能，暂时不用-->
-  <el-dropdown class="avatar-container" trigger="click">
+  
+  <el-dropdown class="avatar-container" >
     <div class="avatar-wrapper"> 
-      <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
+      <!-- <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar"> -->
       <i class="el-icon-caret-bottom"></i> 
-      <span>{{nameBak}}-{{name}}</span>
+      <span trigger="click">{{nameBak}}-{{name}}</span>
     </div>
     <el-dropdown-menu class="user-dropdown" slot="dropdown">
       <router-link class='inlineBlock' to="/">
@@ -23,6 +24,9 @@
       <el-dropdown-item divided><span @click="logout" style="display:block;">退出</span></el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
+  <div class="avatar-container1" >
+    <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar">
+  </div>
 </el-menu>
 </template>
 
@@ -66,6 +70,9 @@ export default {
         .then(() => {
           location.reload(); // 为了重新实例化vue-router对象 避免bug
       });
+    },
+    editAvatar(){
+      console.log("编辑图片")
     }
   }
 }
@@ -93,10 +100,22 @@ export default {
         top: 16px;
         color: red;
     }
+    .avatar-container1 {
+      float:right;
+      height: 40px;
+      margin-right: 0px;
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 10px;
+        }
+      
+    }
     .avatar-container {
       float:right;
       height: 50px;
-      margin-right: 30px;
+      margin-right: 20px;
       .avatar-wrapper {
         display: flex;
         align-items: center;
