@@ -257,6 +257,9 @@ export default {
                             }
                             
                         }
+                        if(this.movieRelName.length>1){
+                            this.isDisabled=false;
+                        }
                     }
                     
                     if(res.movieTypeList.length){//电影类型
