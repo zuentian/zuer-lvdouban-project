@@ -10,7 +10,8 @@ import 'nprogress/nprogress.css'// Progress 进度条 样式
 import vueWaves from './directive/waves';// 水波纹指令
 import IconSvg from 'components/Icon-svg';// svg 组件
 import { getToken } from 'utils/auth';
-
+import VueCropper from 'vue-cropper';//图片裁剪vue-cropper
+Vue.use(VueCropper);
 //配置icon-svg组件 start
 Vue.component('icon-svg',IconSvg)
 const requireAll = requireContext => requireContext.keys().map(requireContext)

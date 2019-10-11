@@ -1,39 +1,46 @@
 <template>
-
-<el-menu class="navbar" mode="horizontal">
-  
-  <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
-  <levelbar></levelbar>
-  <tabs-view></tabs-view>
-  <!-- <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log> -->
-  <!-- <screenfull class='screenfull'></screenfull> --><!--全屏功能，暂时不用-->
-  
-  <el-dropdown class="avatar-container" >
-    <div class="avatar-wrapper"> 
-      <!-- <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar"> -->
-      <i class="el-icon-caret-bottom"></i> 
-      <span trigger="click">{{nameBak}}-{{name}}</span>
+  <el-menu class="navbar" mode="horizontal">
+    <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
+    <levelbar></levelbar>
+    <tabs-view></tabs-view>
+    <!-- <error-log v-if="log.length>0" class="errLog-container" :logsList="log"></error-log> -->
+    <!-- <screenfull class='screenfull'></screenfull> --><!--全屏功能，暂时不用-->
+    
+    <el-dropdown class="avatar-container" >
+      <div class="avatar-wrapper"> 
+        <i class="el-icon-caret-bottom"></i> 
+        <span trigger="click">{{nameBak}}-{{name}}</span>
+      </div>
+      <el-dropdown-menu class="user-dropdown" slot="dropdown">
+        <router-link class='inlineBlock' to="/">
+          <el-dropdown-item> 首页 </el-dropdown-item>
+        </router-link>
+        <!-- <a target='_blank' href="">
+          <el-dropdown-item> 项目地址 </el-dropdown-item>
+        </a> -->
+        <el-dropdown-item divided><span @click="logout" style="display:block;">退出</span></el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+    <div class="avatar-container1" >
+      <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar">
     </div>
-    <el-dropdown-menu class="user-dropdown" slot="dropdown">
-      <router-link class='inlineBlock' to="/">
-        <el-dropdown-item> 首页 </el-dropdown-item>
-      </router-link>
-      <!-- <a target='_blank' href="">
-        <el-dropdown-item> 项目地址 </el-dropdown-item>
-      </a> -->
-      <el-dropdown-item divided><span @click="logout" style="display:block;">退出</span></el-dropdown-item>
-    </el-dropdown-menu>
-  </el-dropdown>
-  <div class="avatar-container1" >
-    <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar">
-  </div>
-</el-menu>
+        
+    <el-dialog title="设置头像" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+      <cropper></cropper>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
+  </el-menu>
+
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
 import Levelbar from './Levelbar';
 import TabsView from './TabsView';
+import Cropper from 'components/Cropper';
 import Hamburger from 'components/Hamburger';
 //import Screenfull from 'components/Screenfull';
 //import ErrorLog from 'components/ErrLog';
@@ -43,12 +50,14 @@ export default {
     Levelbar,
     TabsView,
     Hamburger,
+    Cropper,
     //ErrorLog,
     //Screenfull
   },
   data() {
     return {
       //log: errLogStore.state.errLog
+      dialogVisible:false,
     }
   },
   mounted(){
@@ -73,6 +82,10 @@ export default {
     },
     editAvatar(){
       console.log("编辑图片")
+      this.dialogVisible=true;
+    },
+    handleClose(done) {
+      done();
     }
   }
 }
