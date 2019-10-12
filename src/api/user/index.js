@@ -66,3 +66,11 @@ export function updateUserByGroupId(data){
   })
 }
 
+
+export function avatarUpload(param){
+  return fetch({
+    url:'/api/UserController/avatarUpload',
+    method:'post',
+    data:param
+  })
+}

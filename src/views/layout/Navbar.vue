@@ -25,11 +25,10 @@
       <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'" @click="editAvatar">
     </div>
         
-    <el-dialog title="设置头像" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
-      <cropper></cropper>
+    <el-dialog title="设置头像" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" :close-on-press-escape=false	:close-on-click-modal=false>
+      <cropper ref="avatarUpload" :width=150 :height=150 :url='avatar' @upload="upload"></cropper>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="avatarUpload()" v-loading="loading">确 定</el-button>
       </span>
     </el-dialog>
   </el-menu>
@@ -42,6 +41,7 @@ import Levelbar from './Levelbar';
 import TabsView from './TabsView';
 import Cropper from 'components/Cropper';
 import Hamburger from 'components/Hamburger';
+import {avatarUpload} from 'api/user/index.js'
 //import Screenfull from 'components/Screenfull';
 //import ErrorLog from 'components/ErrLog';
 //import errLogStore from 'store/errLog';
@@ -58,6 +58,7 @@ export default {
     return {
       //log: errLogStore.state.errLog
       dialogVisible:false,
+      loading:false,
     }
   },
   mounted(){
@@ -67,6 +68,7 @@ export default {
       'name',
       'avatar',
       'nameBak',
+      'userId',
     ])
     
   },
@@ -81,8 +83,26 @@ export default {
       });
     },
     editAvatar(){
-      console.log("编辑图片")
       this.dialogVisible=true;
+    },
+    upload(formData){
+      console.log("头像编辑上传formData",formData);
+      formData.append("id",this.userId);
+      avatarUpload(formData).then(avatar=>{
+        this.$notify({ title:'成功', message:'头像设置成功', type:'success', duration:2000 });
+        if(avatar!=null){
+          this.$store.dispatch('SetAvatar',avatar);
+        }
+      }).finally(()=>{
+        this.loading=false;
+        this.dialogVisible=false;
+      })
+    },
+    avatarUpload(){
+      this.loading=true;
+      if(this.$refs.avatarUpload !== undefined) {
+        this.$refs.avatarUpload.finish();//调用子组件上传图片的方法
+      }
     },
     handleClose(done) {
       done();

@@ -89,7 +89,7 @@ const user={
                     commit('SET_NAME',data.name);
                     commit('SET_NAMEBAK',data.nameBak);
                     commit('SET_USERID',data.id);
-                    commit('SET_AVATAR','');// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
+                    commit('SET_AVATAR',data.avatar);// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
                     
                     commit('SET_PERMISSION_MENUS',data.menuTrees);
@@ -126,6 +126,11 @@ const user={
                 }).catch(err=>{
                     reject(err);
                 })
+            });
+        },
+        SetAvatar({commit},avatar){
+            return new Promise(resolve => {
+                commit('SET_AVATAR',avatar);
             });
         }
     }
