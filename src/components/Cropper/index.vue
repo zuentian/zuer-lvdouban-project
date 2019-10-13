@@ -99,12 +99,10 @@ export default {
         }
     },
     created(){
-        this.option.img=this.url;
+        this.option.img=this.url||"";
     },
     props:{
         url:{
-            type:String,
-            required:true,
         },
         width:{
             type:Number,

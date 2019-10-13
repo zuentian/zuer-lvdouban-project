@@ -5,7 +5,16 @@
                 <h1> <strong>{{movieInfo.movieName}}({{titleMovieYear}}) </strong></h1>
             </div>
             <el-row>
-                <el-col :span="12">
+                <el-col :span="4" >
+                    <div class='img'>
+                        <el-image style="width: 100px; height: 100px" :src="src">
+                            <div slot="error" class="image-slot">
+                                <span class="dot">暂无海报</span>
+                            </div>
+                        </el-image>
+                    </div>
+                </el-col>
+                <el-col :span="10">
                     <div>
                         <strong>电影名字：</strong>
                         <span >{{movieOtherName}}</span>
@@ -30,7 +39,7 @@
                 <el-col :span="1" >
                     <el-divider direction="vertical"></el-divider>
                 </el-col>
-                <el-col :span="10">
+                <el-col :span="9">
                     <span>豆瓣评分</span>
                     <el-row :gutter="20">
                         <el-col :span="3" v-if='movieInfo.score>0'>
@@ -124,7 +133,8 @@ export default {
             moviePictureInfo:null,
             moviePictureInfoBaseCount:0,
             scoreBig:'',
-            scoreSectionCount:[]
+            scoreSectionCount:[],
+            src:"",
         }
     },
     components: { 
@@ -209,7 +219,7 @@ export default {
     }
 }
 </script>
-<style scoped>
+<style  rel="stylesheet/scss" lang="scss"  scoped>
 .el-divider--vertical {
     display: inline-block;
     width: 1px;
@@ -217,5 +227,11 @@ export default {
     margin: 0 8px;
     vertical-align: middle;
     position: relative;
+}
+.img{
+    width: 150px;
+    height: 200px;
+    background-color:yellow;
+    
 }
 </style>
