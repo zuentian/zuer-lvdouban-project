@@ -82,3 +82,20 @@ export function deletePictureById(id){
     method:'get'
   })
 }
+
+
+export function moviePictureBillUpload(param){
+  return fetch({
+    url:'/movie/MovieInfoController/moviePictureBillUpload',
+    method:'post',
+    data:param
+  })
+}
+
+
+export function queryMoviePictureBillOne(id){
+  return fetch({
+    url:'/movie/MovieInfoController/queryMoviePictureBillOne/'+id,
+    method:'get'
+  })
+}

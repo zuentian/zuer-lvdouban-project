@@ -5,15 +5,37 @@
                 <h1> <strong>{{movieName}}的全部图片</strong></h1>
             </div>
             <el-card>
+                <h3>海报· · · · · ·(共{{totalBill}}张)</h3>
+                <el-row>
+                    <el-col v-for="(picture) in pictureListBill" :key="picture.key"  :span="4">
+                        <el-image style="width: 200px; height:200px"  :src="picture.fileUri" fit='contain'></el-image>
+                        <div style="width: 200px;height:30px"  >
+                            <span style="display:block;text-align: center;overflow-wrap:break-word;">{{picture.fileName}}</span>
+                        </div>
+                        <div class="bottom clearfix" style="text-align:center;">
+                            <el-button type="text" class="button" @click='onPreview(picture.fileUri)'>查看大图</el-button>
+                            <el-button v-if='moviePicture_btn_del' type="text" class="button" @click="deletePicture(picture.id)">删除图片</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+                <el-col>
+                <div style="text-align:center" v-show="total>0" class="pagination-container">
+                    <el-pagination background @size-change="handleSizeChangeBill" @current-change="handleCurrentChangeBill" :current-page.sync="listQueryBill.page" :page-sizes="[10,20,30, 50]" :page-size="listQueryBill.limit" layout=" prev, pager, next, jumper" :total="totalBill"> </el-pagination>
+                </div>
+                </el-col>
+            </el-card>
+            <el-card>
                 <h3>剧照· · · · · ·(共{{total}}张)</h3>
                 <el-row>
                     <el-col v-for="(picture) in pictureList" :key="picture.key"  :span="4">
                         <el-image style="width: 200px; height:200px"  :src="picture.fileUri" fit='contain'></el-image>
-                            <div class="bottom clearfix" style="text-align:center;">
-                                <el-button type="text" class="button" @click='onPreview(picture.fileUri)'>查看大图</el-button>
-                                <el-button v-if='moviePicture_btn_del' type="text" class="button" @click="deletePicture(picture.id)">删除图片</el-button>
-                            </div>
-                        
+                        <div style="width: 200px;height:30px"  >
+                            <span style="display:block;text-align: center;overflow-wrap:break-word;">{{picture.fileName}}</span>
+                        </div>
+                        <div class="bottom clearfix" style="text-align:center;">
+                            <el-button type="text" class="button" @click='onPreview(picture.fileUri)'>查看大图</el-button>
+                            <el-button v-if='moviePicture_btn_del' type="text" class="button" @click="deletePicture(picture.id)">删除图片</el-button>
+                        </div>
                     </el-col>
                 </el-row>
                 <el-col>
@@ -42,6 +64,10 @@ export default {
                 page:1,
                 limit:18,
             },
+            listQueryBill:{
+                page:1,
+                limit:6,
+            },
             type:'',
             total:0,
             movieId:'',
@@ -50,6 +76,8 @@ export default {
             showViewer:false,
             url:"",
             moviePicture_btn_del:true,
+            totalBill:0,
+            pictureListBill:[],
         }
     },
     components: { 
@@ -60,6 +88,10 @@ export default {
             queryMoviePictureByParam({...this.listQuery,movieId:this.movieId,type:'S'}).then(res=>{
                 this.total=res.count;
                 this.pictureList=res.list;
+            })
+            queryMoviePictureByParam({...this.listQueryBill,movieId:this.movieId,type:'B'}).then(res=>{
+                this.totalBill=res.count;
+                this.pictureListBill=res.list;
             })
         },
         queryMovieInfo(){
@@ -73,6 +105,14 @@ export default {
         },
         handleCurrentChange(val){
             this.listQuery.page=val;
+            this.queryList();
+        },
+        handleSizeChangeBill(val){
+            this.listQueryBill.limit=val;
+            this.queryList();
+        },
+        handleCurrentChangeBill(val){
+            this.listQueryBill.page=val;
             this.queryList();
         },
         deletePicture(id){

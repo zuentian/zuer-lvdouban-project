@@ -6,12 +6,20 @@
             </div>
             <el-row>
                 <el-col :span="4" >
-                    <div class='img'>
-                        <el-image style="width: 100px; height: 100px" :src="src">
+                    <div >
+                        <el-image style="width: 150px; height: 200px" :src="moviePictureBill">
                             <div slot="error" class="image-slot">
-                                <span class="dot">暂无海报</span>
+                                <div class='img' v-if="movieInfoBill_btn_edit">
+                                    <span class="dot" style="color:red" @click="upLoadBill()">上传海报</span>
+                                </div>
+                                <div class='img' v-else>
+                                    <span class="dot">暂无海报</span>
+                                </div>
                             </div>
                         </el-image>
+                    </div>
+                    <div style="width:150px" >
+                        <span v-if="movieInfoBill_btn_edit" style="color:red;display:block;text-align: center;" @click="upLoadBill()">编辑海报</span>
                     </div>
                 </el-col>
                 <el-col :span="10">
@@ -104,13 +112,21 @@
             <movie-user-short-command :movieId="movieInfo.id" :movieName="movieInfo.movieName" ref="movieUserShortCommand"></movie-user-short-command>
         </el-card>
 
+        <el-dialog title="上传海报" :visible.sync="dialogVisible" width="50%" :before-close="handleClose" :close-on-press-escape=false	:close-on-click-modal=false>
+            <cropper ref="billUpload" :width=150 :height=200 :url='moviePictureBill' @upload="upload"></cropper>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="billUpload()" v-loading="loading">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
-import {queryMovieInfoById,queryMoviePictureInfoByMovieIdFromSix,} from 'api/movie/movieInfo/index.js';
+import {queryMovieInfoById,queryMoviePictureInfoByMovieIdFromSix,moviePictureBillUpload,
+        queryMoviePictureBillOne} from 'api/movie/movieInfo/index.js';
 import {queryMovieScoreInfo} from 'api/movie/movieUser/index.js';
 import MovieUser from './movieUser.vue'
 import MovieUserShortCommand from './movieUserShortCommand.vue'
+import Cropper from 'components/Cropper';
 export default {
     data(){
         return{
@@ -134,12 +150,16 @@ export default {
             moviePictureInfoBaseCount:0,
             scoreBig:'',
             scoreSectionCount:[],
-            src:"",
+            movieInfoBill_btn_edit:true,
+            dialogVisible:false,
+            moviePictureBill:'',
+            loading:false,
         }
     },
     components: { 
         MovieUser,
         MovieUserShortCommand,
+        Cropper,
     },
     methods:{
         queryMovie(id){
@@ -185,17 +205,26 @@ export default {
                 }
                
             })
-            queryMoviePictureInfoByMovieIdFromSix(id).then(res=>{
-                this.moviePictureInfo=res.moviePictureInfoList;
-                this.moviePictureInfoBaseCount=res.moviePictureCount;
-            })
+            
             queryMovieScoreInfo(id).then(res=>{
                 this.scoreSectionCount=res;
             })
             if (this.$refs.movieUserShortCommand!== undefined) {
                 this.$refs.movieUserShortCommand.queryList();//但新增评论或修改评论之后，也要刷新评论区的数据
             }
-            
+            this.queryMoviePictureBill(id);//查询海报
+            this.queryMoviePictureInfoByMovieIdFromSix(id);//查询电影海报及图片
+        },
+        queryMoviePictureBill(id){
+            queryMoviePictureBillOne(id).then(res=>{
+                this.moviePictureBill=res.fileUri;
+            })
+        },
+        queryMoviePictureInfoByMovieIdFromSix(id){
+            queryMoviePictureInfoByMovieIdFromSix(id).then(res=>{
+                this.moviePictureInfo=res.moviePictureInfoList;
+                this.moviePictureInfoBaseCount=res.moviePictureCount;
+            })
         },
         getMovieCountry(code){
             for(var i=0;i<this.optionsFromMovieCountry.length;i++){
@@ -212,11 +241,37 @@ export default {
                 }
             )
         },
+        upLoadBill(){
+            this.dialogVisible=true;
+        },
+        upload(formData){
+            console.log("海报编辑上传formData",formData);
+            formData.append("id",this.movieInfo.id);
+            moviePictureBillUpload(formData).then(moviePictureBill=>{
+                this.$notify({ title:'成功', message:'头像设置成功', type:'success', duration:2000 });
+                if(moviePictureBill!=null){
+                    this.moviePictureBill=moviePictureBill;
+                }
+                this.queryMoviePictureInfoByMovieIdFromSix(this.movieInfo.id);
+            }).finally(()=>{
+                this.loading=false;
+                this.dialogVisible=false;
+            })
+        },
+        billUpload(){
+            this.loading=true;
+            if(this.$refs.billUpload !== undefined) {
+                this.$refs.billUpload.finish();//调用子组件上传图片的方法
+            }
+        },
+        handleClose(done) {
+            done();
+        }
     },
     created(){
         this.queryDict();
         this.queryMovie(this.$route.params.id);
-    }
+    },
 }
 </script>
 <style  rel="stylesheet/scss" lang="scss"  scoped>
@@ -233,5 +288,10 @@ export default {
     height: 200px;
     background-color:yellow;
     
+}
+.dot{
+    text-align: center;
+    display:block;
+    line-height:200px;
 }
 </style>
