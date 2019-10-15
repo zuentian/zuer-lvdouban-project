@@ -11,6 +11,7 @@ const getters={
     username:state=>state.user.username,
     userId:state=>state.user.userId,
     routerTrees:state=>state.user.routerTrees,
+    roles:state=>state.user.roles,
     elements:state=>state.user.elements,
     nameBak:state=>state.user.nameBak,
     movieName:state=>state.movie.movieName,

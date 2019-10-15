@@ -1,6 +1,6 @@
 <template>
     <div >
-        <h3>{{movieName}}的短评 · · · · · ·</h3>
+        <h3>{{movieName}}的短评 · · · · · ·(全部{{shortCommandInfo.length}}条)</h3>
         <el-divider></el-divider>
 
         <div v-for='item in shortCommandInfo' :key="item.key" >

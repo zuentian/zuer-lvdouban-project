@@ -75,13 +75,18 @@ export default {
             pictureList:[],
             showViewer:false,
             url:"",
-            moviePicture_btn_del:true,
+            moviePicture_btn_del:false,
             totalBill:0,
             pictureListBill:[],
         }
     },
     components: { 
         ElImageViewer 
+    },
+    computed: {
+        ...mapGetters([
+        'elements',
+        ])
     },
     methods:{
         queryList(){
@@ -148,7 +153,8 @@ export default {
         this.movieId=this.$route.params.id;
         this.queryMovieInfo();
         this.queryList();
-    },
+        this.moviePicture_btn_del = this.elements['moviePicture_btn_del'];
+    }
 }
 </script>
 <style scoped>

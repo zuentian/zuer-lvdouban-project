@@ -115,6 +115,7 @@
 <script>
 import {queryMovieInfoByParam,queryMovieInfoById,deleteMovieInfoById} from 'api/movie/movieInfo/index.js'
 import {  Message, MessageBox } from 'element-ui';
+import { mapGetters } from 'vuex';
 var that;//定义一个全局变量
 export default {
     components: {
@@ -136,8 +137,8 @@ export default {
             listLoading:false,
             expandsLoading:false,
             list:[],
-            movieInfo_btn_edit:true,
-            movieInfo_btn_del:true,
+            movieInfo_btn_edit:false,
+            movieInfo_btn_del:false,
             total:0,
             expands:[],
             optionsFromMovieType:null,
@@ -311,9 +312,16 @@ export default {
             });
         }
     },
+    computed: {
+        ...mapGetters([
+        'elements',
+        ])
+    },
     created(){
         this.queryDict();
         this.queryList();
+        this.movieInfo_btn_edit = this.elements['movieInfo_btn_edit'];
+        this.movieInfo_btn_del = this.elements['movieInfo_btn_del'];
     }
 }
 </script>

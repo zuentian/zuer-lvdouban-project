@@ -127,6 +127,7 @@ import {queryMovieScoreInfo} from 'api/movie/movieUser/index.js';
 import MovieUser from './movieUser.vue'
 import MovieUserShortCommand from './movieUserShortCommand.vue'
 import Cropper from 'components/Cropper';
+import { mapGetters } from 'vuex';
 export default {
     data(){
         return{
@@ -150,7 +151,7 @@ export default {
             moviePictureInfoBaseCount:0,
             scoreBig:'',
             scoreSectionCount:[],
-            movieInfoBill_btn_edit:true,
+            movieInfoBill_btn_edit:false,
             dialogVisible:false,
             moviePictureBill:'',
             loading:false,
@@ -160,6 +161,11 @@ export default {
         MovieUser,
         MovieUserShortCommand,
         Cropper,
+    },
+    computed: {
+        ...mapGetters([
+        'elements',
+        ])
     },
     methods:{
         queryMovie(id){
@@ -271,6 +277,7 @@ export default {
     created(){
         this.queryDict();
         this.queryMovie(this.$route.params.id);
+        this.movieInfoBill_btn_edit = this.elements['movieInfoBill_btn_edit'];
     },
 }
 </script>
