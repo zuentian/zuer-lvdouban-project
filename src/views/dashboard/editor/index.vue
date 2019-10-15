@@ -14,17 +14,17 @@
             <el-col :span="6">
               <el-card class="box-card">
                   <div slot="header" class="box-card-header">
-                    <pan-thumb class="panThumb" :image="avatar"> 你的权限:
+                    <pan-thumb class="panThumb" :image="avatar||''"> 你的权限:
                       <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
                     </pan-thumb>
                   </div>
                   <span class="display_name">{{name}}</span>
                   <div class="info-item">
-                    <span class="info-item-text">文章</span>
+                    <span class="info-item-text">称号</span>
                     <icon-svg icon-class="a" class="dashboard-editor-icon"></icon-svg>
                   </div>
                   <div class="info-item">
-                    <span class="info-item-text">称号</span>
+                    <span class="info-item-text">段位</span>
                     <icon-svg icon-class="b" class="dashboard-editor-icon"></icon-svg>
                   </div>
               </el-card>
@@ -45,7 +45,7 @@ export default {
       }
     },
     components: { 
-      panThumb,countTo
+      panThumb
     },
     created(){
     },

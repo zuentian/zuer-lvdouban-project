@@ -19,7 +19,7 @@
                     </el-col>
                 </el-row>
                 <el-col>
-                <div style="text-align:center" v-show="total>0" class="pagination-container">
+                <div style="text-align:center" v-show="totalBill>0" class="pagination-container">
                     <el-pagination background @size-change="handleSizeChangeBill" @current-change="handleCurrentChangeBill" :current-page.sync="listQueryBill.page" :page-sizes="[10,20,30, 50]" :page-size="listQueryBill.limit" layout=" prev, pager, next, jumper" :total="totalBill"> </el-pagination>
                 </div>
                 </el-col>
@@ -29,7 +29,7 @@
                 <el-row>
                     <el-col v-for="(picture) in pictureList" :key="picture.key"  :span="4">
                         <el-image style="width: 200px; height:200px"  :src="picture.fileUri" fit='contain'></el-image>
-                        <div style="width: 200px;height:30px"  >
+                        <div style="width: 200px;height:40px"  >
                             <span style="display:block;text-align: center;overflow-wrap:break-word;">{{picture.fileName}}</span>
                         </div>
                         <div class="bottom clearfix" style="text-align:center;">
