@@ -15,6 +15,7 @@ const user={
         elements:null,
         username:"",
         nameBak:"",
+        level:"",
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -58,7 +59,12 @@ const user={
         //功能按钮权限
         SET_ELEMENT:(state,elements)=>{
             state.elements=elements;
+        },
+        //段位
+        SET_LEVEL:(state,level)=>{
+            state.level=level;
         }
+        
     },
     actions:{
         //登录
@@ -84,14 +90,14 @@ const user={
                 getUserInfo(state.token).then(res=>{
                     
                     const data=res;
-                    commit('SET_ROLES','admin');
+                    commit('SET_ROLES',data.groupList);
                     commit('SET_USERNAME',data.username);
                     commit('SET_NAME',data.name);
                     commit('SET_NAMEBAK',data.nameBak);
                     commit('SET_USERID',data.id);
                     commit('SET_AVATAR',data.avatar);// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
-                    
+                    commit('SET_LEVEL',data.level);
                     commit('SET_PERMISSION_MENUS',data.menuTrees);
                     // const menus={}
                     // for(let i=0;i<data.menus.length;i++){

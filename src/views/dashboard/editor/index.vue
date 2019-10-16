@@ -15,17 +15,19 @@
               <el-card class="box-card">
                   <div slot="header" class="box-card-header">
                     <pan-thumb class="panThumb" :image="avatar||''"> 你的权限:
-                      <span class="pan-info-roles" :key='item' v-for="item in roles">{{item}}</span>
+                      <div class="pan-info-roles" :key='item.key' v-for="item in roles">{{item.name}}</div>
                     </pan-thumb>
                   </div>
                   <span class="display_name">{{name}}</span>
                   <div class="info-item">
-                    <span class="info-item-text">称号</span>
-                    <icon-svg icon-class="a" class="dashboard-editor-icon"></icon-svg>
+                    <span class="info-item-text" style="font-weight:bold">称号</span>
+                    <icon-svg icon-class="nameBak" class="dashboard-editor-icon"></icon-svg>
+                    <span>{{nameBak}}</span>
                   </div>
                   <div class="info-item">
-                    <span class="info-item-text">段位</span>
-                    <icon-svg icon-class="b" class="dashboard-editor-icon"></icon-svg>
+                    <span class="info-item-text" style="font-weight:bold">段位</span>
+                    <icon-svg icon-class="level" class="dashboard-editor-icon"></icon-svg>
+                    <span>{{level | getLevel}}</span>
                   </div>
               </el-card>
             </el-col>
@@ -38,16 +40,39 @@
 import {mapGetters} from 'vuex';
 import panThumb from 'components/PanThumb';//这个组件相当惊艳，展示头像图片，鼠标移上去会放在图片露出图片下面的内容
 //import countTo from 'vue-count-to';//这个组件是数字滚动插件，暂时没有什么用处，不过可以用来表现数字上升或减少的效果
+var that;//定义一个全局变量
 export default {
     data(){
       return{
-
+        levelList:[]
       }
     },
     components: { 
       panThumb
     },
     created(){
+      this.queryDict();
+    },
+    beforeCreate: function () {
+        that = this;
+    },
+    filters:{
+      getLevel(val){
+        for(var i=0;i<that.levelList.length;i++){
+          if(that.levelList[i].value=val){
+            return that.levelList[i].label;
+          }
+        }
+      }
+    },
+    methods:{
+      queryDict(){
+        this.$store.dispatch('QueryDictByDictType',{
+            dictType:'USERLEVEL'
+        }).then(list=>{
+          this.levelList=list;
+        })
+      }
     },
     computed:{
         ...mapGetters([
@@ -56,6 +81,7 @@ export default {
             'roles',
             'username',
             'nameBak',
+            'level',
         ])
     }
 }

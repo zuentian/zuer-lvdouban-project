@@ -15,6 +15,7 @@ const getters={
     elements:state=>state.user.elements,
     nameBak:state=>state.user.nameBak,
     movieName:state=>state.movie.movieName,
+    level:state=>state.user.level,
 }
 
 export default getters

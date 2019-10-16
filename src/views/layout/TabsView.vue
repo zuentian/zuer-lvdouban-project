@@ -27,6 +27,7 @@
           return this.$route.matched[this.$route.matched.length - 1]
         }
         this.$route.matched[0].path = '/'
+        console.log("this.$route.matched[0]",this.$route.matched[0])
         return this.$route.matched[0]
       },
       addViewTabs() {
