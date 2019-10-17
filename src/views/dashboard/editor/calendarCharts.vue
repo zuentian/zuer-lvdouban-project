@@ -46,7 +46,7 @@ export default {
     },
     methods: {
         initChart() {
-            this.chart = echarts.init(this.$el, 'macarons');//$el指向当前组件的DOM元素
+            this.chart = echarts.init(this.$el);//$el指向当前组件的DOM元素
             this.chart.setOption({
                 title: {
                     top: 30,
@@ -55,11 +55,15 @@ export default {
                 },
                 tooltip : {},
                 visualMap: {
-                    min: 0,
-                    max: 10000,
+                    splitNumber:3,
+                    pieces: [
+                        {gt: 0, lte: 1,label: '少'}, // 不指定 max，表示 max 为无限大（Infinity）。
+                        {gt: 1, lte: 2,label: '中'},
+                        {gt: 2,label: '多'},
+                    ],
                     type: 'piecewise',
                     orient: 'horizontal',
-                    left: 'center',
+                    left: 'left',
                     top: 65,
                     textStyle: {
                         color: '#000'
@@ -70,56 +74,43 @@ export default {
                     left: 50,
                     right: 30,
                     cellSize: ['auto', 13],
-                    range: '2016',
+                    range: this.year,
                     itemStyle: {
                         normal: {borderWidth: 0.5}
                     },
+                    orient :'horizontal',
                     dayLabel:{
                         nameMap: ['日', '', '二', '', '四', '', '六'],
                     },
                     monthLabel: {
-                        nameMap: 'cn'
+                        nameMap: 'cn',
                     },
                     yearLabel: {position: "top"}
                 },
                 series: {
                     type: 'heatmap',
                     coordinateSystem: 'calendar',
-                    data: ""
+                    data: null
                 }
             })
             this.chart.showLoading();
+            var that=this;
             queryCalendarMovieShowCount({
                 id:this.id,
                 year:this.year
             }).then(function(response){
-                this.chart.setOption({
-                    calendar:{
-                        range:'',
-                    },
-                    series:[{
-                        data:"",
-                    }]
+                console.log("response",response)
+                that.chart.setOption({
+                    series:{
+                        type: 'heatmap',
+                        coordinateSystem: 'calendar',
+                        data:response
+                    }
                 })
             }).catch((err) => {       
             }).finally(() => {
-                this.chart.hideLoading();
+                that.chart.hideLoading();
             })
-        },
-        getVirtulData(year) {
-            year = year || '2017';
-            var date = +echarts.number.parseDate(year + '-01-01');
-            var end = +echarts.number.parseDate((+year + 1) + '-01-01');
-            var dayTime = 3600 * 24 * 1000;
-            var data = [];
-            for (var time = date; time < end; time += dayTime) {
-                data.push([
-                    echarts.format.formatTime('yyyy-MM-dd', time),
-                    Math.floor(Math.random() * 10000)
-                ]);
-            }
-            console.log("data",data)
-            return data;
         }
     }
 }
