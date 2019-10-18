@@ -43,7 +43,7 @@
 import {mapGetters} from 'vuex';
 import panThumb from 'components/PanThumb';//这个组件相当惊艳，展示头像图片，鼠标移上去会放在图片露出图片下面的内容
 //import countTo from 'vue-count-to';//这个组件是数字滚动插件，暂时没有什么用处，不过可以用来表现数字上升或减少的效果
-import calendarCharts from './calendarCharts'
+import calendarCharts from './CalendarCharts'
 
 var that;//定义一个全局变量
 export default {

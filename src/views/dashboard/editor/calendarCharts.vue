@@ -27,6 +27,10 @@ export default {
       },
       year:{
           type:Number,
+      },
+      autoResize: {
+        type: Boolean,
+        default: true
       }
     },
     data() {
@@ -36,6 +40,14 @@ export default {
     },
     mounted() {
       this.initChart();
+      if (this.autoResize) {
+        this.__resizeHanlder = debounce(() => {
+          if (this.chart) {
+            this.chart.resize()
+          }
+        }, 100)
+        window.addEventListener('resize', this.__resizeHanlder)
+      }
     },
     beforeDestroy() {
       if (!this.chart) {
