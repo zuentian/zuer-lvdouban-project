@@ -6,6 +6,7 @@
 import echarts from 'echarts';
 import {queryCalendarMovieShowCount} from 'api/movie/movieCharts/index.js'
 require('echarts/theme/macarons'); // echarts 主题
+import { debounce } from 'utils';
 const animationDuration = 3000;
 export default {
     name: 'charts',//这个name在charts里面特别重要，对应div里class
@@ -20,7 +21,7 @@ export default {
       },
       height: {
         type: String,
-        default: '300px'
+        default: '400px'
       },
       id:{
           type:String,
@@ -41,7 +42,7 @@ export default {
     mounted() {
       this.initChart();
       if (this.autoResize) {
-        this.__resizeHanlder = debounce(() => {
+        this.__resizeHanlder = debounce(() => {//dom的拖拽
           if (this.chart) {
             this.chart.resize()
           }
@@ -60,11 +61,11 @@ export default {
         initChart() {
             this.chart = echarts.init(this.$el);//$el指向当前组件的DOM元素
             this.chart.setOption({
-                title: {
-                    top: 30,
-                    left: 'left',
-                    text: '我的观影记录'
-                },
+                // title: {
+                //     top: 30,
+                //     left: 'left',
+                //     text: '我的观影记录'
+                // },
                 tooltip : {},
                 visualMap: {
                     splitNumber:3,
@@ -111,7 +112,6 @@ export default {
                 id:this.id,
                 year:this.year
             }).then(function(response){
-                console.log("response",response)
                 that.chart.setOption({
                     series:{
                         type: 'heatmap',

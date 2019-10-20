@@ -35,6 +35,7 @@
         </el-row>
 
         <el-row class="btn-group">
+          <span>我的观影记录</span>
           <calendar-charts :id='userId' :year='year'></calendar-charts>
         </el-row>
     </div>
