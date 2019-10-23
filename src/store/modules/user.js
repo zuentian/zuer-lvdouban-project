@@ -16,6 +16,7 @@ const user={
         username:"",
         nameBak:"",
         level:"",
+        crtTime:'',
     },
     mutations:{
         SET_TOKEN:(state,token)=>{
@@ -63,6 +64,10 @@ const user={
         //段位
         SET_LEVEL:(state,level)=>{
             state.level=level;
+        },
+        //注册时间
+        SET_CRTTIME:(state,crtTime)=>{
+            state.crtTime=crtTime;
         }
         
     },
@@ -98,6 +103,7 @@ const user={
                     commit('SET_AVATAR',data.avatar);// 'http://zuentian.gitee.io/zuer-lvdouban-project-picture/photo/girl01.jpg');//默认图片路径，部署在gitee上面的，但需要联网，所以此处不采用
                     commit('SET_INTRODUCTION',data.description);
                     commit('SET_LEVEL',data.level);
+                    commit('SET_CRTTIME',data.crtTime);
                     commit('SET_PERMISSION_MENUS',data.menuTrees);
                     // const menus={}
                     // for(let i=0;i<data.menus.length;i++){

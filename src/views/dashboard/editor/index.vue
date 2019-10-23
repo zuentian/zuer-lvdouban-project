@@ -19,26 +19,50 @@
                     </pan-thumb>
                   </div>
                   <span class="display_name">{{name}}</span>
-                  <div class="info-item">
-                    <span class="info-item-text" style="font-weight:bold">称号</span>
-                    <icon-svg icon-class="nameBak" class="dashboard-editor-icon"></icon-svg>
-                    <span>{{nameBak}}</span>
-                  </div>
-                  <div class="info-item">
-                    <span class="info-item-text" style="font-weight:bold">段位</span>
-                    <icon-svg icon-class="level" class="dashboard-editor-icon"></icon-svg>
-                    <span>{{level | getLevel}}</span>
-                  </div>
+                  <el-row>
+                    <el-col :span="12">
+                      <div class="info-item">
+                      <span class="info-item-text" style="font-weight:bold">称号</span>
+                      <icon-svg icon-class="nameBak" class="dashboard-editor-icon"></icon-svg>
+                      <span>{{nameBak}}</span>
+                      </div>
+                    </el-col>
+                    <el-col :span="12">
+                      <div class="info-item">
+                        <span class="info-item-text" style="font-weight:bold">段位</span>
+                        <icon-svg icon-class="level" class="dashboard-editor-icon"></icon-svg>
+                        <span>{{level | getLevel}}</span>
+                      </div>
+                    </el-col>
+                  </el-row>
+                  <el-row>
+                    <el-col :span="24">
+                      <div class="info-item">
+                      <span class="info-item-text" style="font-weight:bold">注册时间</span>
+                      <icon-svg icon-class="crtDate" class="dashboard-editor-icon"></icon-svg>
+                      <span>{{crtTime}}</span>
+                      </div>
+                    </el-col>
+                  </el-row>
               </el-card>
             </el-col>
             <el-col :span="16">
+                <!--钟表-->
                 <clock></clock>
             </el-col>
         </el-row>
 
         <el-row class="btn-group">
-          <span>我的观影记录</span>
-          <calendar-charts :id='userId' :year='year'></calendar-charts>
+          <!--我的观影记录 日历坐标系-->
+          <el-card>
+            <calendar-charts :id='userId' :crtYear='crtYear' :nowYear='nowYear'></calendar-charts>
+          </el-card>
+        </el-row>
+        <el-row class="btn-group">
+          <!--我最常看的电影类型 柱状-->
+          <el-card>
+            <bar-charts :id='userId'></bar-charts>
+          </el-card>
         </el-row>
     </div>
 </template>
@@ -47,24 +71,30 @@ import {mapGetters} from 'vuex';
 import panThumb from 'components/PanThumb';//这个组件相当惊艳，展示头像图片，鼠标移上去会放在图片露出图片下面的内容
 //import countTo from 'vue-count-to';//这个组件是数字滚动插件，暂时没有什么用处，不过可以用来表现数字上升或减少的效果
 import calendarCharts from './CalendarCharts'
+import barCharts from './BarCharts'
 import Clock from './Clock'
 var that;//定义一个全局变量
 export default {
     data(){
       return{
         levelList:[],
-        year:null
+        crtYear:null,
+        nowYear:null,
       }
     },
     components: { 
       panThumb,
       calendarCharts,
-      Clock
+      Clock,
+      barCharts
     },
     created(){
       this.queryDict();
       var date=new Date();
-      this.year=date.getFullYear();
+      this.nowYear=date.getFullYear();
+      if(this.crtTime!=null){
+        this.crtYear=parseInt(this.crtTime.substr(0,4));
+      }
     },
     beforeCreate: function () {
         that = this;
@@ -96,6 +126,7 @@ export default {
             'nameBak',
             'level',
             'userId',
+            'crtTime',
         ])
     }
 }
@@ -105,7 +136,7 @@ export default {
 .dashboard-editor-container {
     margin: 30px;
     .btn-group {
-        margin-bottom: 60px;
+        margin-bottom: 20px;
     }
     .box-card-header {
         position: relative;
@@ -129,7 +160,7 @@ export default {
         margin-top: 10px;
         font-size: 14px;
         &:last-of-type{
-            margin-left: 15px;
+            margin-left: 0px;
         }
     }
 }
