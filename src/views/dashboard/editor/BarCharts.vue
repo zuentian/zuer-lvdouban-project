@@ -67,14 +67,15 @@ export default {
                 },
                 yAxis: {
                     type: 'category',
-                    data: ['巴西','印尼','美国','印度','中国','世界人口(万)'],
-                    axisTick: {
-                        alignWithLabel: true
-                    }
+                    // data: ['巴西','印尼','美国','印度','中国','世界人口(万)'],
+                    // axisTick: {
+                    //     alignWithLabel: true
+                    // }
                 },
                 xAxis: {
                     show:false,
                 },
+                //color:['#f9c603','#e0b616'],
                 series: [{
                     type: 'bar',
                     label: {
@@ -84,17 +85,41 @@ export default {
                         }
                     },
                     itemStyle:{
-                        barBorderRadius:[0, 5, 5, 0]
+                        barBorderRadius:[0, 5, 5, 0],
+                    },
+                    encode:{
+                        x:'count',
+                        y:'type'
                     },
                     barWidth :'90%',
-                    data: [18203, 23489, 29034, 104970, 131744, 630230]
-                }]
+                    //data: [18203, 23489, 29034, 104970, 131744, 630230]
+                }],
+                dataset:{
+                    source:[
+                        ['count','type'],
+                        ['100','恐怖'],
+                        ['200','爱情'],
+                        ['900','科幻'],
+                        ['400','动画'],
+                        ['10','冒险'],
+                        ['800','战争'],
+                        ['700','家庭'],
+                        ['200','动作'],
+                    ]
+                },
+                visualMap: {
+                    show :false,
+                    type: 'continuous',
+                    min: 10,
+                    max: 1000,
+                    inRange: {
+                        color: ['#D1DA8B', '#115457']
+                    }
+                },
             })
             this.chart.showLoading();
             var that=this;
-            queryBarMovieShowCount({
-                id:this.id,
-            }).then(function(response){
+            queryBarMovieShowCount(this.id).then(function(response){
                 that.chart.setOption({
                     series:{
                         type: 'heatmap',
