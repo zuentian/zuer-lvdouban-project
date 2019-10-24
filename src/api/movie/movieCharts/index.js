@@ -12,7 +12,14 @@ export function queryCalendarMovieShowCount(param){
 
 export function queryBarMovieShowCount(id){
   return fetch({
-    url:'/movie/MovieInfoController/queryBarMovieShowCount/'+id,
+    url:'/movie/MovieChartsController/queryBarMovieShowCount/'+id,
+    method:'get',
+  })
+}
+
+export function queryPieShowMovieYearCount(id){
+  return fetch({
+    url:'/movie/MovieChartsController/queryPieShowMovieYearCount/'+id,
     method:'get',
   })
 }

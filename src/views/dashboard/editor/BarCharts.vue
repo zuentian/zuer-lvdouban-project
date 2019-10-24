@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-row >
+        <el-row v-if="show">
             <el-col :span="22" :offset="1">
                 <div  class="barCharts" id="barCharts" :style="{height:height,width:width}"></div>
             </el-col>
@@ -18,6 +18,8 @@ export default {
     data(){
         return{
             autoResize:true,
+            data:[],
+            show:true,
         }
     },
     props: {
@@ -56,78 +58,60 @@ export default {
             this.chart = echarts.init(document.getElementById('barCharts'));
             this.chart.setOption({
                 title: {
-                      left: 'left',
-                      text: '我最爱看的电影类型'
+                    left: 'center',
+                    text: '我看过的电影类型'
                 },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '2%',
-                    containLabel: true
-                },
+                grid: {left: '3%',right: '4%',bottom: '2%',containLabel: true},
                 yAxis: {
                     type: 'category',
-                    // data: ['巴西','印尼','美国','印度','中国','世界人口(万)'],
-                    // axisTick: {
-                    //     alignWithLabel: true
-                    // }
+                    axisTick: {alignWithLabel: true}
                 },
-                xAxis: {
-                    show:false,
-                },
-                //color:['#f9c603','#e0b616'],
+                xAxis: {show:false,},
                 series: [{
                     type: 'bar',
                     label: {
                         normal: {
                             show: true,
-                            position: 'insideLeft'
+                            position: 'insideLeft',
+                            formatter:function(p){
+                                return p.data[1]+"部"
+                            },
                         }
                     },
                     itemStyle:{
                         barBorderRadius:[0, 5, 5, 0],
                     },
-                    encode:{
-                        x:'count',
-                        y:'type'
-                    },
+                    encode:{x:'type',y:'count'},
                     barWidth :'90%',
-                    //data: [18203, 23489, 29034, 104970, 131744, 630230]
                 }],
                 dataset:{
-                    source:[
-                        ['count','type'],
-                        ['100','恐怖'],
-                        ['200','爱情'],
-                        ['900','科幻'],
-                        ['400','动画'],
-                        ['10','冒险'],
-                        ['800','战争'],
-                        ['700','家庭'],
-                        ['200','动作'],
-                    ]
+                    source:[],
                 },
                 visualMap: {
                     show :false,
                     type: 'continuous',
-                    min: 10,
-                    max: 1000,
+                    dimension: 0,
                     inRange: {
-                        color: ['#D1DA8B', '#115457']
+                        color: ['#D7DA8B', '#E15457']
                     }
                 },
             })
             this.chart.showLoading();
             var that=this;
             queryBarMovieShowCount(this.id).then(function(response){
+                var d=['count','type'];
+                response.data.unshift(d);
+                that.data=response.data;
                 that.chart.setOption({
-                    series:{
-                        type: 'heatmap',
-                        coordinateSystem: 'calendar',
-                        data:response
+                    dataset:{
+                        source:that.data
+                    },
+                    visualMap:{
+                        max:response.max
                     }
                 })
-            }).catch((err) => {       
+            }).catch((err) => {  
+                this.show=false;     
             }).finally(() => {
                 that.chart.hideLoading();
             })

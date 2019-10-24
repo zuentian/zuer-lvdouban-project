@@ -59,10 +59,18 @@
           </el-card>
         </el-row>
         <el-row class="btn-group">
-          <!--我最常看的电影类型 柱状-->
-          <el-card>
-            <bar-charts :id='userId'></bar-charts>
-          </el-card>
+          <el-col :span="12">
+            <!--我最常看的电影类型 柱状-->
+            <el-card>
+              <bar-charts :id='userId'></bar-charts>
+            </el-card>
+          </el-col>
+          <el-col :span="12">
+            <!--我最常看的电影年份分布 饼状图-->
+            <el-card>
+              <pie-charts :id='userId'></pie-charts>
+            </el-card>
+          </el-col>
         </el-row>
     </div>
 </template>
@@ -72,6 +80,7 @@ import panThumb from 'components/PanThumb';//这个组件相当惊艳，展示�
 //import countTo from 'vue-count-to';//这个组件是数字滚动插件，暂时没有什么用处，不过可以用来表现数字上升或减少的效果
 import calendarCharts from './CalendarCharts'
 import barCharts from './BarCharts'
+import pieCharts from './PieCharts'
 import Clock from './Clock'
 var that;//定义一个全局变量
 export default {
@@ -86,7 +95,8 @@ export default {
       panThumb,
       calendarCharts,
       Clock,
-      barCharts
+      barCharts,
+      pieCharts,
     },
     created(){
       this.queryDict();

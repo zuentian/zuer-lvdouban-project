@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row>
+    <el-row v-if='show'>
       <el-col :span="1">
         <div @click="upYear()">
           <icon-svg  v-if='year<nowYear' icon-class="left-charts" :style="{height:height,width:width}"></icon-svg>
@@ -55,6 +55,7 @@ export default {
       return {
         chart: null,
         year:null,
+        show:true,
       };
     },
     created(){
@@ -149,7 +150,8 @@ export default {
                         data:response
                     }
                 })
-            }).catch((err) => {       
+            }).catch((err) => { 
+                this.show=false;        
             }).finally(() => {
                 that.chart.hideLoading();
             })
