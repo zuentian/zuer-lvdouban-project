@@ -191,6 +191,7 @@ export default {
                 if(this.movieInfo.movieName2!=null&&this.movieInfo.movieName2!=''&&this.movieInfo.movieName2!==undefined){
                     this.movieOtherName=this.movieOtherName+" / "+ this.movieInfo.movieName2;
                 }
+                this.movieCountrys="";
                 if(res.movieCountryList){
                     for(var i=0;i<res.movieCountryList.length;i++){
                         if(i==0){
@@ -200,6 +201,7 @@ export default {
                         }
                     }
                 }
+                this.movieTypes="";
                 if(res.movieTypeList){
                     for(var i=0;i<res.movieTypeList.length;i++){
                         if(i==0){

@@ -48,3 +48,10 @@ export function queryShortCommandByMovieId(param){
       params:param
   });
 }
+
+export function queryWatchMovieCount(id){
+  return fetch({
+    url:'/movie/MovieUserController/queryWatchMovieCount/'+id,
+    method:'get',
+  })
+}

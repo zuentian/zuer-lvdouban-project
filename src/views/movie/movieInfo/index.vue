@@ -72,7 +72,7 @@
                 </template>
             </el-table-column>
             <el-table-column  align="center" label="电影名字" prop="movieName" min-width='150px'></el-table-column>
-            <el-table-column  align="center" label="电影别名" prop="movieName1" min-width='120px'> </el-table-column>
+            <el-table-column  align="center" label="电影别名" prop="movieName1" min-width='240px'> </el-table-column>
             <el-table-column  align="center" label="上映时间" prop="movieShowTime" min-width='100px'></el-table-column>
             <el-table-column  align="center" label="电影评分" prop="score" :formatter="scoreFormatter"></el-table-column>
             <el-table-column  align="center" label="看过人数" prop="watchAfterNumber" ></el-table-column>
@@ -84,7 +84,7 @@
                     <el-tag effect="plain" :type="'success'" :key="tag.key" v-for="tag in scope.row.movieCountryList"  :disable-transitions="false" >{{tag.countryCode | getCountry(optionsFromMovieCountry)}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column align="center" label="类型" min-width='200px' prop="movieType">
+            <el-table-column align="center" label="类型" min-width='240px' prop="movieType">
                 <template slot-scope="scope">
                     <el-tag effect="dark" :type="'warning'" :key="tag.key" v-for="tag in scope.row.movieTypeList"  :disable-transitions="false" >{{tag.type}}</el-tag>
                 </template>
@@ -242,7 +242,7 @@ export default {
             this.listQuery.limit=val;
             this.queryList();
         },
-        handleCurrentChange(){
+        handleCurrentChange(val){
             this.listQuery.page=val;
             this.queryList();
         },

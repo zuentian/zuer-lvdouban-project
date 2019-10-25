@@ -14,7 +14,7 @@
             <el-col :span="6">
               <el-card class="box-card">
                   <div slot="header" class="box-card-header">
-                    <pan-thumb class="panThumb" :image="avatar||''"> 你的权限:
+                    <pan-thumb class="panThumb" :image="avatar||''"> 你的角色:
                       <div class="pan-info-roles" :key='item.key' v-for="item in roles">{{item.name}}</div>
                     </pan-thumb>
                   </div>
@@ -31,10 +31,27 @@
                       <div class="info-item">
                         <span class="info-item-text" style="font-weight:bold">段位</span>
                         <icon-svg icon-class="level" class="dashboard-editor-icon"></icon-svg>
-                        <span>{{level | getLevel}}</span>
+                        <span>{{watchAfterCount | getLevel}}</span>
                       </div>
                     </el-col>
                   </el-row>
+                  <el-row>
+                    <el-col :span="12">
+                      <div class="info-item">
+                      <span class="info-item-text" style="font-weight:bold">标记看过</span>
+                      <icon-svg icon-class="watchAfterCount" class="dashboard-editor-icon"></icon-svg>
+                      <span>{{watchAfterCount}}部</span>
+                      </div>
+                    </el-col>
+                    <el-col :span="12">
+                      <div class="info-item">
+                      <span class="info-item-text" style="font-weight:bold">标记想看</span>
+                      <icon-svg icon-class="watchBeforeCount" class="dashboard-editor-icon"></icon-svg>
+                      <span>{{watchBeforeCount}}部</span>
+                      </div>
+                    </el-col>
+                  </el-row>
+
                   <el-row>
                     <el-col :span="24">
                       <div class="info-item">
@@ -82,6 +99,9 @@ import calendarCharts from './CalendarCharts'
 import barCharts from './BarCharts'
 import pieCharts from './PieCharts'
 import Clock from './Clock'
+
+import {queryWatchMovieCount} from 'api/movie/movieUser/index.js'
+
 var that;//定义一个全局变量
 export default {
     data(){
@@ -89,6 +109,8 @@ export default {
         levelList:[],
         crtYear:null,
         nowYear:null,
+        watchAfterCount:0,
+        watchBeforeCount:0,
       }
     },
     components: { 
@@ -104,7 +126,8 @@ export default {
       this.nowYear=date.getFullYear();
       if(this.crtTime!=null){
         this.crtYear=parseInt(this.crtTime.substr(0,4));
-      }
+      };
+      this.queryWatchMovieCount();
     },
     beforeCreate: function () {
         that = this;
@@ -112,7 +135,7 @@ export default {
     filters:{
       getLevel(val){
         for(var i=0;i<that.levelList.length;i++){
-          if(that.levelList[i].value=val){
+          if(that.levelList[i].value>=val){
             return that.levelList[i].label;
           }
         }
@@ -123,7 +146,16 @@ export default {
         this.$store.dispatch('QueryDictByDictType',{
             dictType:'USERLEVEL'
         }).then(list=>{
+          list.sort(function(a,b){
+            return parseInt(a.value)-parseInt(b.value);
+          })
           this.levelList=list;
+        })
+      },
+      queryWatchMovieCount(){
+        queryWatchMovieCount(this.userId).then(res=>{
+          this.watchAfterCount=res.watchAfterCount;
+          this.watchBeforeCount=res.watchBeforeCount;
         })
       }
     },
