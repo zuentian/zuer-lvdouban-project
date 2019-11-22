@@ -2,18 +2,22 @@
   <div>
     <el-row v-if='show'>
       <el-col :span="1">
-        <div @click="upYear()">
-          <icon-svg  v-if='year<nowYear' icon-class="left-charts" :style="{height:height,width:width}"></icon-svg>
-          <icon-svg  v-else icon-class="left-charts-no-select" :style="{height:height,width:width}" ></icon-svg>
+        <div v-if='year<nowYear'  @click="upYear()">
+          <icon-svg  icon-class="left-charts" :style="{height:height,width:width}"></icon-svg>
+        </div>
+        <div v-else>
+          <icon-svg  icon-class="left-charts-no-select" :style="{height:height,width:width}" ></icon-svg>
         </div>
       </el-col>
       <el-col :span="22">
         <div class="charts" id="charts" :style="{height:height,width:width}"></div>
       </el-col>
       <el-col :span="1">
-        <div v-on:click="downYear()">
-          <icon-svg v-if='year>crtYear' icon-class="right-charts" :style="{height:height,width:width}"></icon-svg>
-          <icon-svg v-else icon-class="right-charts-no-select" :style="{height:height,width:width}"></icon-svg>
+        <div  v-if='year>crtYear'  v-on:click="downYear()">
+          <icon-svg icon-class="right-charts" :style="{height:height,width:width}"></icon-svg>
+        </div>
+        <div v-else>
+          <icon-svg icon-class="right-charts-no-select" :style="{height:height,width:width}"></icon-svg>
         </div>
       </el-col>
     </el-row>
