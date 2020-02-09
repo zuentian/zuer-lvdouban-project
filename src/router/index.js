@@ -47,6 +47,11 @@ export const constantRouterMap=[{
     path:'moviePicture/:id',
     name:'电影剧照',
     component: _import('movie/movieInfo/picture'),
+  },
+  {
+    path:'movieLongComment/:id',
+    name:'电影长评',
+    component: _import('movie/movieInfo/longComment'),
   }]
 },
 {

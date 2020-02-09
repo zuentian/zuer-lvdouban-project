@@ -11,6 +11,9 @@ import vueWaves from './directive/waves';// 水波纹指令
 import IconSvg from 'components/Icon-svg';// svg 组件
 import { getToken } from 'utils/auth';
 import VueCropper from 'vue-cropper';//图片裁剪vue-cropper
+import VueQuillEditor from 'vue-quill-editor';//富文本编辑器
+
+Vue.use(VueQuillEditor);
 Vue.use(VueCropper);
 //配置icon-svg组件 start
 Vue.component('icon-svg',IconSvg)

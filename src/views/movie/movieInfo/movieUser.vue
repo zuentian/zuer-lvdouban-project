@@ -38,6 +38,16 @@
             </el-col>
         </el-row>
 
+        <el-row>
+            <el-col style="margin:7px 0" :span="2">
+                <span class="svg-container"><icon-svg icon-class="longComment"></icon-svg></span>
+                <router-link style="color:#6340e6" :to="{path:'/movie/movieLongComment/'+movieId}">写长评</router-link>
+            </el-col>
+            <el-col style="margin:7px 0" :span="12">
+                <span class="svg-container"><icon-svg icon-class="shareComment"></icon-svg></span>
+                <router-link style="color:#6340e6" :to="{path:'/movie/movieLongComment/'+movieId}">分享到：</router-link>
+            </el-col>
+        </el-row>
         
         <el-dialog  :title="title" :visible.sync="dialogVisible"  width="50%" :before-close="handleClose">
             

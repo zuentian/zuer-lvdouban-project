@@ -103,7 +103,7 @@
             <el-carousel v-if="moviePictureInfoBaseCount>0" :interval="4000"  type="card" height="400px">
                   <el-carousel-item v-for="(item,index) in moviePictureInfo" :key="index">
                   <h3 align="center">{{ item.fileName}}</h3>
-                  <el-image style="width: 400px; height:400px;margin:0px 100px;"  :src="item.fileUri" fit='contain'></el-image>
+                  <el-image style="width: 400px; height:400px;margin:0px 200px;"  :src="item.fileUri" fit='contain'></el-image>
                   <!-- <img style="width: 100%; height: auto;" :src="item.fileUri" class="image"> -->
                   </el-carousel-item>
             </el-carousel>
