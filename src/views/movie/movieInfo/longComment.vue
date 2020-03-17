@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div>
+    <div class="comment">
+        <div >
             <input placeholder="添加标签" />
         </div>
         <div>
@@ -66,12 +66,16 @@ export default {
 </script>
 <style>
 /*此处加 scoped 会让富文本编辑样式失效 */
-.editor {
-  line-height: normal !important;
-  height: 500px;
+.comment {
   width: 80%;
   margin: auto;
 }
+
+.editor {
+  height: 100%;
+}
+
+
 
 .ql-snow .ql-tooltip {
     margin: 0px 50px;/*链接弹窗往右移 */

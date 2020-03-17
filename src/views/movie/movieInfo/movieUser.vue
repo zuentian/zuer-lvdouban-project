@@ -14,10 +14,10 @@
         </el-row>
         <el-row v-if='movieUserInfo.state=="2"||movieUserInfo.state=="1"'>
             <el-col style="margin:8px 0" :span="5"  v-if='movieUserInfo.state=="2"'>
-                <span>我看过这部电影 {{movieUserInfo.watchAfterTime}}</span>
+                <span style="font-weight:bold">我看过这部电影 {{movieUserInfo.watchAfterTime}}</span>
             </el-col>
             <el-col style="margin:8px 0" :span="5"  v-if='movieUserInfo.state=="1"'>
-                <span>我想看这部电影 {{movieUserInfo.watchBeforeTime}}</span>
+                <span style="font-weight:bold">我想看这部电影 {{movieUserInfo.watchBeforeTime}}</span>
             </el-col>
             <el-col style="margin:7px 0" :span="4">
                  <el-button size="mini" type="success" @click="update()">修改</el-button>
@@ -26,7 +26,7 @@
         </el-row>
         <el-row v-if='movieUserInfo.state=="2"'>
             <el-col style="margin:5px 0" :span="2">
-                <span>我的评价：</span>
+                <span style="font-weight:bold">我的评价：</span>
             </el-col>
             <el-col style="margin:8px 0" :span="4">
                 <el-rate v-model="movieUserInfo.score" disabled show-text :texts='texts'></el-rate>

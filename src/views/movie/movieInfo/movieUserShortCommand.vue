@@ -10,10 +10,10 @@
                 </el-col>
                 <el-col :span="18">
                     <el-row>
-                        <el-col :span="2"><span style="color:#ef1018">{{item.name}}</span></el-col>
-                        <el-col :span="2"><span>{{item.state| getState}}</span></el-col>
+                        <el-col :span="2"><span style="color:#ef1018;font-weight:bold">{{item.name}}</span></el-col>
+                        <el-col :span="2"><span style="font-weight:bold">{{item.state| getState}}</span></el-col>
                         <el-col :span="4"><el-rate v-model="item.score" disabled ></el-rate></el-col>
-                        <el-col :span="4">{{item.watchAfterTime}}</el-col>
+                        <el-col :span="4" style="font-weight:bold">{{item.watchAfterTime}}</el-col>
                     </el-row>
                     <el-row style='margin-top:15px;'>
                         <span>{{item.shortCommand}}</span>
