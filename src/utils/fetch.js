@@ -93,6 +93,14 @@ service.interceptors.response.use(
       });
       return Promise.reject(error.response);
     }
+    // if(error.response.status==500){
+    //   Message({
+    //     message: '系统服务错误！',
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   });
+    //   return Promise.reject(error.response);
+    // }
     Message({
       message: error.response.data.message,
       type: 'error',
