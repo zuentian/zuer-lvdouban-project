@@ -166,7 +166,7 @@ export default {
     },
     addCrawlerAccountInfo(){
       this.dialogVisible=true;
-      this.crawlerAccountInfoAdd={};
+      this.crawlerUrlInfoAdd={};
     },
     async submitForm(formName){
       this.loadingAdd=true;
@@ -190,7 +190,7 @@ export default {
     },
     resetForm(formName){
       this.$refs[formName].resetFields();
-      this.crawlerAccountInfoAdd={};
+      this.crawlerUrlInfoAdd={};
     },
     handleSizeChange(val){
         this.pageSize=val;
