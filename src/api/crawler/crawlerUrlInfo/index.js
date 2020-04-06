@@ -1,15 +1,15 @@
 import fetch from 'utils/fetch';
 
-export function addCrawlerAccount(param){
+export function addCrawlerUrlInfo(param){
     return fetch({
-        url:'/movie/CrawlerAccountController/addCrawlerAccount',
+        url:'/movie/CrawlerUrlInfoController/addCrawlerUrlInfo',
         method:'post',
         params:param
     })
 }
-export function updateCrawlerAccountInfoById(param){
+export function updateCrawlerUrlInfoById(param){
     return fetch({
-        url:'/movie/CrawlerAccountController/updateCrawlerAccountInfoById',
+        url:'/movie/CrawlerUrlInfoController/updateCrawlerUrlInfoById',
         method:'post',
         params:param
     })
@@ -17,14 +17,14 @@ export function updateCrawlerAccountInfoById(param){
 
 export function queryById(id){
     return fetch({
-        url:'/movie/CrawlerAccountController/queryById/'+id,
+        url:'/movie/CrawlerUrlInfoController/queryById/'+id,
         method:'get',
     })
 }
 
 export function queryPage(param){
     return fetch({
-        url:'/movie/CrawlerAccountController/queryPage',
+        url:'/movie/CrawlerUrlInfoController/queryPage',
         method:'post',
         params:param
     })
@@ -32,7 +32,7 @@ export function queryPage(param){
 
 export function deleteById(id){
     return fetch({
-        url:'/movie/CrawlerAccountController/deleteById/'+id,
+        url:'/movie/CrawlerUrlInfoController/deleteById/'+id,
         method:'get',
     })
 }

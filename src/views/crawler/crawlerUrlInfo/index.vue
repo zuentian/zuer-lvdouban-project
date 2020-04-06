@@ -2,15 +2,15 @@
   <div class="dict container">
     <el-card>
         <div slot="header" style="display:flex;justify-content: space-between;align-items: center;">
-            <label style="font-size: 16px;">登录账号信息</label>
-            <el-button type="danger" @click="addCrawlerAccountInfo">新增登录账号<i class="el-icon-plus" style="margin-left:10px;"></i></el-button>
+            <label style="font-size: 16px;">爬虫地址信息</label>
+            <el-button type="danger" @click="addCrawlerAccountInfo">新增爬虫地址<i class="el-icon-plus" style="margin-left:10px;"></i></el-button>
         </div>
                 <el-row>
                 <el-col  :span="3" style="text-align:left">
                     <span style="line-height:30px;font-size:16px;font-family:微软雅黑">网站名称：</span>
                 </el-col>
                 <el-col :span="5" >
-                    <el-input v-model="web" clearable  size="small"></el-input>
+                    <el-input v-model="typeName" clearable  size="small"></el-input>
                 </el-col>
                 <el-col  :span="2" style="text-align:center">
                   <el-button type="primary" icon="el-icon-search" size="small"  @click="query">搜索</el-button>
@@ -19,16 +19,16 @@
 
     </el-card>
     
-    <el-table :data="crawlerAccountInfo"   style="width: 100%" v-loading="loading" :row-style="{height:'0'}" :cell-style="{padding:'4px'}">
+    <el-table :data="crawlerUrlInfo"   style="width: 100%" v-loading="loading" :row-style="{height:'0'}" :cell-style="{padding:'4px'}">
         <el-table-column type="index" > </el-table-column>
-        <el-table-column align="center" prop="web" label="网站标识" min-width='100'></el-table-column>
-        <el-table-column align="center" prop="webName" label="网站名称" min-width='100'></el-table-column>
-        <el-table-column align="center" prop="account"  label="账号" min-width='100'></el-table-column> 
-        <el-table-column align="center" prop="flag"  label="状态" :formatter="flagFormatter" min-width='100' ></el-table-column>
+        <el-table-column align="center" prop="typeName" label="网站名称" min-width='100'></el-table-column>
+        <el-table-column align="center" prop="type" label="网站类型" min-width='100'></el-table-column>
+        <el-table-column align="center" prop="urlName"  label="url名称" min-width='100'></el-table-column> 
+        <el-table-column align="center" prop="url"  label="url地址" min-width='400' ></el-table-column>
         <el-table-column fixed="right" align="center" label="操作" width="100">
         <template slot-scope="scope">
-            <el-button @click="updateCrawlerAccountInfo(scope.row)"  type="text" size="small">编辑</el-button>
-            <el-button type="text" size="small" @click="deleteCrawlerAccountInfo(scope.row)">删除</el-button>
+            <el-button @click="updateCrawlerUrlInfo(scope.row)"  type="text" size="small">编辑</el-button>
+            <el-button type="text" size="small" @click="deleteCrawlerUrlInfo(scope.row)">删除</el-button>
         </template>
         </el-table-column>
   
@@ -49,44 +49,34 @@
     </div>
 
     <el-dialog  title="新增登录账号" :visible.sync="dialogVisible"  width="50%" :before-close="handleClose" :loading="loadingAdd">
-      <el-form ref="crawlerAccountInfoAdd" :model="crawlerAccountInfoAdd" :rules="rules"  label-width="140px" label-position="right" >
+      <el-form ref="crawlerUrlInfoAdd" :model="crawlerUrlInfoAdd" :rules="rules"  label-width="140px" label-position="right" >
             <div class="well">
-                <el-form-item label="网站标识" prop="web"><el-input v-model.trim="crawlerAccountInfoAdd.web"></el-input></el-form-item>
-                <el-form-item label="网站名称" prop="webName"><el-input v-model.trim="crawlerAccountInfoAdd.webName"></el-input></el-form-item>
-                <el-form-item label="账号" prop="account"><el-input v-model.trim="crawlerAccountInfoAdd.account"></el-input></el-form-item>
-                <el-form-item label="密码" prop="password"><el-input type="password" auto-complete="new-password" v-model.trim="crawlerAccountInfoAdd.password"></el-input></el-form-item>
-                <el-form-item label="状态" prop="flag">
-                  <el-select v-model="crawlerAccountInfoAdd.flag" placeholder="请选择" >
-                    <el-option v-for="item in flags" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
+                <el-form-item label="网站名称" prop="typeName"><el-input v-model.trim="crawlerUrlInfoAdd.typeName"></el-input></el-form-item>
+                <el-form-item label="网站类型" prop="type"><el-input v-model.trim="crawlerUrlInfoAdd.type"></el-input></el-form-item>
+                <el-form-item label="url名称" prop="urlName"><el-input v-model.trim="crawlerUrlInfoAdd.urlName"></el-input></el-form-item>
+                <el-form-item label="url地址" prop="url"><el-input v-model.trim="crawlerUrlInfoAdd.url"></el-input></el-form-item>
             </div>
         </el-form>
       <span slot="footer" class="dialog-footer">
         
       <el-button @click="dialogVisible = false">取 消</el-button>
-      <el-button @click="resetForm('crawlerAccountInfoAdd')">重置</el-button>
-      <el-button type="primary" @click="submitForm('crawlerAccountInfoAdd')">确 定</el-button>
+      <el-button @click="resetForm('crawlerUrlInfoAdd')">重置</el-button>
+      <el-button type="primary" @click="submitForm('crawlerUrlInfoAdd')">确 定</el-button>
       </span>
     </el-dialog>
 
      <el-dialog  title="修改登录账号" :visible.sync="dialogVisibleEdit"  width="50%" :before-close="handleClose" :loading="loadingEdit">
-      <el-form ref="crawlerAccountInfoEdit" :model="crawlerAccountInfoEdit" :rules="ruleEdits"  label-width="140px" label-position="right" >
+      <el-form ref="crawlerUrlInfoEdit" :model="crawlerUrlInfoEdit" :rules="ruleEdits"  label-width="140px" label-position="right" >
             <div class="well">
-                <el-form-item label="网站标识" prop="web"><el-input v-model.trim="crawlerAccountInfoEdit.web" :disabled="true"></el-input></el-form-item>
-                <el-form-item label="网站名称" prop="webName"><el-input v-model.trim="crawlerAccountInfoEdit.webName" :disabled="true"></el-input></el-form-item>
-                <el-form-item label="账号" prop="account"><el-input v-model.trim="crawlerAccountInfoEdit.account"></el-input></el-form-item>
-                <el-form-item label="密码" prop="password"><el-input  type="password" auto-complete="new-password" v-model.trim="crawlerAccountInfoEdit.password" autoComplete="on" ></el-input></el-form-item>
-                <el-form-item label="状态" prop="flag">
-                  <el-select v-model="crawlerAccountInfoEdit.flag" placeholder="请选择" >
-                    <el-option v-for="item in flags" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                  </el-select>
-                </el-form-item>
+                <el-form-item label="网站名称" prop="typeName"><el-input v-model.trim="crawlerUrlInfoEdit.typeName"></el-input></el-form-item>
+                <el-form-item label="网站类型" prop="type"><el-input v-model.trim="crawlerUrlInfoEdit.type"></el-input></el-form-item>
+                <el-form-item label="url名称" prop="urlName"><el-input v-model.trim="crawlerUrlInfoEdit.urlName"></el-input></el-form-item>
+                <el-form-item label="url地址" prop="url"><el-input v-model.trim="crawlerUrlInfoEdit.url"></el-input></el-form-item>
             </div>
         </el-form>
       <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisibleEdit = false">取 消</el-button>
-      <el-button type="primary" @click="submitFormEdit('crawlerAccountInfoEdit')">确 定</el-button>
+      <el-button type="primary" @click="submitFormEdit('crawlerUrlInfoEdit')">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -95,88 +85,65 @@
 
 <script>
 import {  Message, MessageBox } from 'element-ui';
-import {addCrawlerAccount,queryPage,updateCrawlerAccountInfoById,queryById} from 'api/crawler/crawlerAccountInfo/index.js'
+import { addCrawlerUrlInfo,queryPage,queryById,deleteById,updateCrawlerUrlInfoById } from 'api/crawler/crawlerUrlInfo/index.js'
 
 export default {
-  name: 'crawlerAccountInfo',
+  name: 'crawlerUrlInfo',
   data () {
     return {
       pageSize:10,
       total:0,
       currentPage:1,
-      crawlerAccountInfo:[],
+      crawlerUrlInfo:[],
       isShowPagination:false,
       loading:false,
       loadingAdd:false,
       loadingEdit:false,
-      web:"",
+      typeName:"",
       dialogVisible:false,
       dialogVisibleEdit:false,
-      crawlerAccountInfoAdd:{
+      crawlerUrlInfoAdd:{
         id:"",
-        web:"",
-        webName:"",
-        account:"",
-        password:"",
-        flag:"",
+        typeName:"",
+        type:"",
+        urlName:"",
+        url:"",
       },
-      crawlerAccountInfoEdit:{
+      crawlerUrlInfoEdit:{
         id:"",
-        web:"",
-        webName:"",
-        account:"",
-        password:"",
-        flag:"",
+        typeName:"",
+        type:"",
+        urlName:"",
+        url:"",
       },
       rules: {
-        web: [
-            { required: true, message: '请输入网站标识', trigger: 'blur' },
+        typeName: [
+            { required: true, message: '请输入网站名称', trigger: 'blur' },
             { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
-        webName: [
-            { required: true, message: '请输入网站名称', trigger: 'blur' },
+        type: [
+            { required: true, message: '请输入网站类型', trigger: 'blur' },
             { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
-        account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
+        urlName: [
+            { required: true, message: '请输入url名称', trigger: 'blur' },
             { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        flag: [
-            { required: true, message: '请选择状态', trigger: 'blur' },
         ],
       },
       ruleEdits:{
-        web: [
-            { required: true, message: '请输入网站标识', trigger: 'blur' },
+        typeName: [
+            { required: true, message: '请输入网站名称', trigger: 'blur' },
             { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
         ],
-        webName: [
-            { required: true, message: '请输入网站名称', trigger: 'blur' },
+        type: [
+            { required: true, message: '请输入网站类型', trigger: 'blur' },
             { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
-        account: [
-            { required: true, message: '请输入账号', trigger: 'blur' },
+        urlName: [
+            { required: true, message: '请输入url名称', trigger: 'blur' },
             { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
-        password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        flag: [
-            { required: true, message: '请选择状态', trigger: 'blur' },
-        ],
-      },
-      flags:[{
-        value:"0",
-        label:'禁用',
-      },{
-        value:"1",
-        label:'启用',
-      }]
+      }
     }
   },
   methods:{
@@ -185,9 +152,9 @@ export default {
       queryPage({
         currentPage:this.currentPage,
         pageSize:this.pageSize,
-        web:this.web,
+        typeName:this.typeName,
       }).then(res => {
-        this.crawlerAccountInfo=res.list;
+        this.crawlerUrlInfo=res.list;
         this.total=res.count;
         if(this.total>0){
             this.isShowPagination=true;
@@ -205,8 +172,8 @@ export default {
       this.loadingAdd=true;
       await this.$refs[formName].validate((valid) => {
         if (valid) {
-          addCrawlerAccount({
-            crawlerAccountInfoAdd:this.crawlerAccountInfoAdd,
+          addCrawlerUrlInfo({
+            crawlerUrlInfoAdd:this.crawlerUrlInfoAdd,
           }).then(res=>{
             this.$notify({title: '添加成功',message: '',type: 'success'});
             this.dialogVisible=false;
@@ -233,18 +200,18 @@ export default {
         this.currentPage=val;
         this.query(this.pageSize,this.currentPage);
     },
-    async updateCrawlerAccountInfo(row){
+    async updateCrawlerUrlInfo(row){
       this.dialogVisibleEdit=true;
       this.loadingAdd=true;
       queryById(row.id).then(info=>{
-        this.crawlerAccountInfoEdit=info;
+        this.crawlerUrlInfoEdit=info;
       }).catch(err=>{
         this.dialogVisibleEdit=false;
       }).finally(() => {
         this.loadingAdd = false
       })
     },
-    deleteCrawlerAccountInfo(row){
+    deleteCrawlerUrlInfo(row){
       this.$confirm('此操作将会永久删除，请再次确认是否删除？', '确认信息', {
         distinguishCancelAndClose: true,
         confirmButtonText: '删除',
@@ -253,7 +220,7 @@ export default {
         deleteById(row.id).then(res=>{
           this.$notify({title: '删除成功',message: '',type: 'success'});
           this.query(this.pageSize,this.currentPage);
-        }).catch(err=>{  
+        }).catch(err=>{
         }).finally(() => {
         })
       }).catch(action => {
@@ -275,8 +242,8 @@ export default {
       this.loadingEdit=true;
       await this.$refs[formName].validate((valid) => {
         if (valid) {
-          updateCrawlerAccountInfoById({
-            crawlerAccountInfoEdit:this.crawlerAccountInfoEdit,
+          updateCrawlerUrlInfoById({
+            crawlerUrlInfoEdit:this.crawlerUrlInfoEdit,
           }).then(res=>{
             this.$notify({title: '修改成功',message: '',type: 'success'});
             this.dialogVisibleEdit=false;
@@ -291,14 +258,6 @@ export default {
         }
       })
     },
-    flagFormatter(row, column, cellValue){
-      for(var flag of this.flags){
-          if(flag.value==row.flag){
-              return flag.label;
-          }
-      }
-    },
-
   },
   mounted(){
     this.query(this.pageSize,this.currentPage);
