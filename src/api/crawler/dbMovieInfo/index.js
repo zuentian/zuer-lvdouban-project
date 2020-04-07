@@ -5,7 +5,7 @@ export function getDbMovieInfo(){
 
 export function searchTags(){
     return fetch({
-        url:'/api/CrawlerController/searchTags',
+        url:'/movie/CrawlerController/searchTags',
         method:'get',
     })
 }
