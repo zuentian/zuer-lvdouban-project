@@ -33,7 +33,8 @@ export default {
         },
         searchTags(){
             searchTags().then(res=>{
-                
+                console.log(res);
+                tags = res.tags;
             })
         },
     },
