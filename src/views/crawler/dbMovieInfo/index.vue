@@ -1,15 +1,11 @@
 <template>
     <div class="dict container">
-        <el-card>
+        <el-card  v-loading="loading">
             <el-row>
-                <el-col :span="1">
-                    <span style="margin:5px 0;float:right">标签：</span>
-                </el-col>
-                <el-col  :span="4" >
-                    <el-select v-model="tag" clearable  filterable placeholder="请选择" size="small">
-                        <el-option v-for="item in tags" :key="item.value" :label="item.label" :value="item.label" > </el-option>
-                    </el-select>
-                </el-col>
+                <span>电影标签选择</span>
+            </el-row>
+            <el-row>
+                <button v-for="tag in tags" :key="tag" @click="link(tag)">tag</button>
             </el-row>
         </el-card>
         <el-button  type="primary" v-waves icon="el-icon-search" class="filter-item" @click="get()">获取豆瓣电影名单</el-button>
@@ -23,6 +19,7 @@ export default {
             tags:[],
             tag:null,
             loging:true,
+            loading:false,
         }
     },
     methods:{
@@ -32,10 +29,17 @@ export default {
             })
         },
         searchTags(){
+            this.loading=true;
             searchTags().then(res=>{
-                
+                this.tags =res.tags;
+            }).catch((err) => {      
+            }).finally(() => {
+                this.loading = false
             })
         },
+        link(db){
+            alert(db);
+        }
     },
     created(){
         this.searchTags();
