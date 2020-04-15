@@ -1,17 +1,26 @@
 <template>
     <div class="dict container">
         <el-card  v-loading="loading" v-show='showflag'>
-            <el-row :span="24">
-                <el-col>
+            <el-row >
+                <el-col :span="22" >
                     <span style='font-weight:bold'>电影标签选择</span>
+                </el-col>
+                <el-col :span="2" >
+                      <el-button type="warning" icon="el-icon-refresh" @click="refreshTags()"></el-button>
                 </el-col>
             </el-row>
             <el-row :span="24">
                 <el-col>
-                    <el-radio-group v-model="checktag" :change="change()">
-                        <el-radio-button v-for="tag in tags" :label="tag" :key="tag" >{{tag}}</el-radio-button>
+                     <el-tabs v-model="checktag" @tab-click="handleClick">
+                        <el-tab-pane :label="tag" v-for="tag in tags" :name="tag"  :key="tag"></el-tab-pane>
+                    </el-tabs>
+                </el-col>
+                <el-col>
+                    <el-radio-group v-model="sort">
+                        <el-radio label='recommend'>按热度排序</el-radio>
+                        <el-radio label='time'>按时间排序</el-radio>
+                        <el-radio label="rank">按评价排序</el-radio>
                     </el-radio-group>
-                    <el-button type="warning" icon="el-icon-refresh" @click="refreshTags()"></el-button>
                 </el-col>
             </el-row>
         </el-card>
@@ -38,7 +47,6 @@ export default {
     data(){
         return{
             tags:[],
-            tag:null,
             loging:true,
             loading:false,
             checktag:null,
@@ -47,12 +55,22 @@ export default {
             info:null,
             loadingForTable:false,
             tableflag:false,
+            sort:'recommend',
+            type:'movie',
+            page_limit:20,
+            page_start:0,
         }
     },
     methods:{
         get(){
-            getDbMovieInfo().then(res=>{
-
+            getDbMovieInfo({
+                type:this.type,
+                tag:this.checktag,
+                page_limit:this.page_limit,
+                page_start:this.page_start,
+                sort:this.sort,
+            }).then(res=>{
+                
             })
         },
         searchTags(){
@@ -66,8 +84,9 @@ export default {
                 if(this.checktag!=null&&this.tags.includes(this.checktag)){
                 }else{
                     if(res.tags.length>0){
-                        //this.checktag=this.tags[0];
+                        this.checktag=this.tags[0];
                     }
+                    this.oldchecktags = this.checktag;
                 }
                 this.tableflag=true;
                 this.loadingForTable=true;
@@ -79,8 +98,12 @@ export default {
         refreshTags(){
             this.searchTags();
         },
-        change(){
-            console.log("this.checktag",this.checktag)
+        handleClick(tab, event){
+            console.log(this.checktag)
+            if(this.checktag != this.oldchecktags){//这次点击的和上一次点击是同一个，则不用刷新页面
+                this.oldchecktags = this.checktag;
+                this.get();
+            }
         }
     },
     created(){

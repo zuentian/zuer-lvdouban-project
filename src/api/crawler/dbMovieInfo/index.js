@@ -1,6 +1,10 @@
 import fetch from 'utils/fetch';
-export function getDbMovieInfo(){
-
+export function getDbMovieInfo(param){
+    return fetch({
+        url:'/movie/CrawlerController/getDbMovieInfo',
+        method:'post',
+        params:param,
+    })
 }
 
 export function searchTags(){
