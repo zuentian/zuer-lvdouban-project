@@ -18,6 +18,7 @@ const service = axios.create({
 service.interceptors.request.use(config => {
   // Do something before request is sent
   
+  //config里面有两个属性，params和data,params会往后端发送json对象，data发送的是json字符串，后端接收的时候直接可以是@RequestBody加对象即可
   if (store.getters.token) {
     config.headers['Authorization'] = getToken(); // 让每个请求携带token--['Authorization']为自定义key 请根据实际情况自行修改
   }

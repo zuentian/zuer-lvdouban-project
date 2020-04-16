@@ -3,7 +3,7 @@ export function getDbMovieInfo(param){
     return fetch({
         url:'/movie/CrawlerController/getDbMovieInfo',
         method:'post',
-        params:param,
+        data:param,
     })
 }
 
