@@ -26,17 +26,27 @@
         </el-card>
         <el-card v-show='tableflag' v-loading="loadingForTable"  >
             <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}">
-                <!-- <el-table-column type="index" > </el-table-column>
-                <el-table-column align="center" prop="typeName" label="网站名称" min-width='100'></el-table-column>
-                <el-table-column align="center" prop="type" label="网站类型" min-width='100'></el-table-column>
-                <el-table-column align="center" prop="urlName"  label="url名称" min-width='100'></el-table-column> 
-                <el-table-column align="center" prop="url"  label="url地址" min-width='400' ></el-table-column>
+                <el-table-column type="index" > </el-table-column>
+                <el-table-column align="center" prop="movieName" label="电影名字" min-width='120'></el-table-column>
+                <el-table-column align="center" prop="year" label="年份" min-width='50'></el-table-column>
+                <el-table-column align="center" prop="score"  label="评分" min-width='50'></el-table-column> 
+                <el-table-column align="center" prop="times[0]"  label="评分" min-width='50'></el-table-column> 
+                <el-table-column align="center" label="时长" min-width='50px' prop="lengths">
+                    <template slot-scope="scope">
+                        <el-tag effect="plain" :type="'success'" :key="length.key" v-for="length in scope.row.lengths"  :disable-transitions="false" >{{length}}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" label="类型" min-width='50px' prop="types">
+                    <template slot-scope="scope">
+                        <el-tag effect="plain" :type="'success'" :key="type.key" v-for="type in scope.row.types"  :disable-transitions="false" >{{type}}</el-tag>
+                    </template>
+                </el-table-column>
                 <el-table-column fixed="right" align="center" label="操作" width="100">
-                <template slot-scope="scope">
+                <!-- <template slot-scope="scope">
                     <el-button @click="updateCrawlerUrlInfo(scope.row)"  type="text" size="small">编辑</el-button>
                     <el-button type="text" size="small" @click="deleteCrawlerUrlInfo(scope.row)">删除</el-button>
-                </template>
-                </el-table-column> -->
+                </template> -->
+                </el-table-column>
             </el-table>
         </el-card>
     </div>
@@ -57,12 +67,13 @@ export default {
             tableflag:false,
             sort:'recommend',
             type:'movie',
-            page_limit:20,
+            page_limit:10,
             page_start:0,
         }
     },
     methods:{
         get(){
+            this.loadingForTable=true;
             getDbMovieInfo({
                 type:this.type,
                 tag:this.checktag,
@@ -70,15 +81,20 @@ export default {
                 page_start:this.page_start,
                 sort:this.sort,
             }).then(res=>{
-                
-            })
+                this.info = res;
+            }).finally(() => {
+              this.loadingForTable = false
+          })
         },
         searchTags(){
             this.loading=true;
             searchTags().then(res=>{
                 this.showflag=true;
-                this.$notify({title: '登陆成功',message: '欢迎来到['+res.loginName+']的豆瓣空间',type: 'success'});
-                
+                if(res.status == 'success'){
+                    this.$notify({title: '登陆成功',message: '欢迎来到['+res.loginName+']的豆瓣空间',type: 'success'});
+                }else{
+                    this.$notify.error({title: '登陆失败('+res.description+')',message: '切换[游客]登录豆瓣空间'});
+                }
                 this.tags =res.tags;
                 this.oldchecktags = this.checktag;
                 if(this.checktag!=null&&this.tags.includes(this.checktag)){
@@ -88,7 +104,7 @@ export default {
                     }
                     this.oldchecktags = this.checktag;
                 }
-                this.tableflag=true;
+                this.tableflag = true;
                 this.loadingForTable=true;
             }).catch((err) => {      
             }).finally(() => {
