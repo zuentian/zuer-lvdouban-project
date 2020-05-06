@@ -27,20 +27,31 @@
         <el-card v-show='tableflag' v-loading="loadingForTable"  >
             <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}">
                 <el-table-column type="index" > </el-table-column>
-                <el-table-column align="center" prop="movieName" label="电影名字" min-width='120'></el-table-column>
-                <el-table-column align="center" prop="year" label="年份" min-width='50'></el-table-column>
-                <el-table-column align="center" prop="score"  label="评分" min-width='50'></el-table-column> 
-                <el-table-column align="center" prop="times[0]"  label="评分" min-width='50'></el-table-column> 
-                <el-table-column align="center" label="时长" min-width='50px' prop="lengths">
+                <el-table-column align="center" prop="title" label="电影名字" min-width='120'></el-table-column>
+                <el-table-column align="center" prop="rate"  label="评分" min-width='50'></el-table-column> 
+                <el-table-column align="center" prop="is_new"  label="新鲜度" min-width='60'>
                     <template slot-scope="scope">
-                        <el-tag effect="plain" :type="'success'" :key="length.key" v-for="length in scope.row.lengths"  :disable-transitions="false" >{{length}}</el-tag>
+                        <el-tag effect="plain" v-if='scope.row.is_new' :type="'danger'"  :disable-transitions="false" >{{scope.row.is_new | isNewFilter}}</el-tag>
+                    </template>    
+                </el-table-column> 
+                <el-table-column align="center" prop="playable"  label="是否可播放" min-width='80'>
+                    <template slot-scope="scope">
+                        <el-tag effect="plain"  v-if="scope.row.playable" :disable-transitions="false" >{{scope.row.playable | playableFilter}}</el-tag>
+                        <el-tag effect="plain" :type="'info'" v-else  :disable-transitions="false" >{{scope.row.playable | playableFilter}}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" label="类型" min-width='50px' prop="types">
+                <el-table-column align="center" prop="cover"  label="海报" min-width='200'>
                     <template slot-scope="scope">
-                        <el-tag effect="plain" :type="'success'" :key="type.key" v-for="type in scope.row.types"  :disable-transitions="false" >{{type}}</el-tag>
-                    </template>
-                </el-table-column>
+                        <el-image :src="scope.row.cover"  referrer="no-referrer|origin|unsafe-url"></el-image>
+                    </template> 
+                </el-table-column>  
+                <el-table-column align="center" prop="url"  label="豆瓣查看地址" min-width='200'>
+                    <template slot-scope="scope"  >
+                        <a href='javascript:;' @click="open(scope.row.url)">
+                            <icon-svg  :style="{height:30,width:30}" icon-class="longComment"></icon-svg>
+                        </a>
+                    </template>    
+                </el-table-column> 
                 <el-table-column fixed="right" align="center" label="操作" width="100">
                 <!-- <template slot-scope="scope">
                     <el-button @click="updateCrawlerUrlInfo(scope.row)"  type="text" size="small">编辑</el-button>
@@ -120,11 +131,30 @@ export default {
                 this.oldchecktags = this.checktag;
                 this.get();
             }
+        },
+        open(url){
+            window.open(url, '_blank');
         }
     },
     created(){
         this.searchTags();
-    }
+    },
+    filters:{
+      isNewFilter(val){
+        if(val){
+            return "新";
+        }else{
+            return "";
+        }
+      },
+      playableFilter(val){
+          if(val){
+              return "可播放";
+          }else{
+              return "不可播放"
+          }
+      }
+    },
 }
 </script>
 <style scoped>
