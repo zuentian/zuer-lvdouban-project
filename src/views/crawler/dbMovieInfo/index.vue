@@ -40,11 +40,7 @@
                         <el-tag effect="plain" :type="'info'" v-else  :disable-transitions="false" >{{scope.row.playable | playableFilter}}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" prop="cover"  label="海报" min-width='200'>
-                    <template slot-scope="scope">
-                        <el-image :src="scope.row.cover"  referrer="no-referrer|origin|unsafe-url"></el-image>
-                    </template> 
-                </el-table-column>  
+                <el-table-column align="center" prop="cover" label="海报"  min-width='200'></el-table-column>  
                 <el-table-column align="center" prop="url"  label="豆瓣查看地址" min-width='200'>
                     <template slot-scope="scope"  >
                         <a href='javascript:;' @click="open(scope.row.url)">
@@ -95,7 +91,7 @@ export default {
                 this.info = res;
             }).finally(() => {
               this.loadingForTable = false
-          })
+            })
         },
         searchTags(){
             this.loading=true;
@@ -134,7 +130,7 @@ export default {
         },
         open(url){
             window.open(url, '_blank');
-        }
+        },
     },
     created(){
         this.searchTags();
@@ -153,7 +149,7 @@ export default {
           }else{
               return "不可播放"
           }
-      }
+      },
     },
 }
 </script>
