@@ -16,7 +16,7 @@
                     </el-tabs>
                 </el-col>
                 <el-col>
-                    <el-radio-group v-model="sort">
+                    <el-radio-group v-model="sort" @change="changSort()">
                         <el-radio label='recommend'>按热度排序</el-radio>
                         <el-radio label='time'>按时间排序</el-radio>
                         <el-radio label="rank">按评价排序</el-radio>
@@ -25,13 +25,13 @@
             </el-row>
         </el-card>
         <el-card v-show='tableflag' v-loading="loadingForTable"  >
-            <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}">
-                <el-table-column type="index" > </el-table-column>
-                <el-table-column align="center" prop="title" label="电影名字" min-width='120'></el-table-column>
+            <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}" :row-class-name="tableRowClassName">
+                <el-table-column type="selection" width="55"></el-table-column>
+                <el-table-column align="center" prop="title" label="电影名字" min-width='150'></el-table-column>
                 <el-table-column align="center" prop="rate"  label="评分" min-width='50'></el-table-column> 
                 <el-table-column align="center" prop="is_new"  label="新鲜度" min-width='60'>
                     <template slot-scope="scope">
-                        <el-tag effect="plain" v-if='scope.row.is_new' :type="'danger'"  :disable-transitions="false" >{{scope.row.is_new | isNewFilter}}</el-tag>
+                        <el-tag effect="plain" v-if='scope.row.is_new == "true"' :type="'danger'"  :disable-transitions="false" >{{scope.row.is_new | isNewFilter}}</el-tag>
                     </template>    
                 </el-table-column> 
                 <el-table-column align="center" prop="playable"  label="是否可播放" min-width='80'>
@@ -40,8 +40,15 @@
                         <el-tag effect="plain" :type="'info'" v-else  :disable-transitions="false" >{{scope.row.playable | playableFilter}}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" prop="cover" label="海报"  min-width='200'></el-table-column>  
-                <el-table-column align="center" prop="url"  label="豆瓣查看地址" min-width='200'>
+                <el-table-column align="center" prop="base64Photo" label="海报"  min-width='100'>
+                    <template slot-scope="scope">
+                        <el-image  style="width: 48px; height: 72px" 
+                            :src="'data:image/png;base64,'+scope.row.base64Photo"
+                            :preview-src-list="['data:image/png;base64,'+scope.row.base64Photo]">
+                        </el-image>
+                    </template> 
+                </el-table-column>  
+                <el-table-column align="center" prop="url"  label="豆瓣查看地址" min-width='50'>
                     <template slot-scope="scope"  >
                         <a href='javascript:;' @click="open(scope.row.url)">
                             <icon-svg  :style="{height:30,width:30}" icon-class="longComment"></icon-svg>
@@ -79,6 +86,14 @@ export default {
         }
     },
     methods:{
+        tableRowClassName({row, rowIndex}) {
+            if (rowIndex %2 == 1) {
+            return 'warning-row';
+            } else if (rowIndex %2 == 0) {
+            return 'success-row';
+            }
+            return '';
+        },
         get(){
             this.loadingForTable=true;
             getDbMovieInfo({
@@ -103,16 +118,20 @@ export default {
                     this.$notify.error({title: '登陆失败('+res.description+')',message: '切换[游客]登录豆瓣空间'});
                 }
                 this.tags =res.tags;
-                this.oldchecktags = this.checktag;
+               
                 if(this.checktag!=null&&this.tags.includes(this.checktag)){
+
                 }else{
                     if(res.tags.length>0){
                         this.checktag=this.tags[0];
                     }
-                    this.oldchecktags = this.checktag;
                 }
+                if(this.checktag != this.oldchecktags){//这次点击的和上一次点击是同一个，则不用刷新页面
+                    this.oldchecktags = this.checktag;
+                    this.get();
+                }
+                this.oldchecktags = this.checktag;
                 this.tableflag = true;
-                this.loadingForTable=true;
             }).catch((err) => {      
             }).finally(() => {
                 this.loading = false
@@ -122,7 +141,6 @@ export default {
             this.searchTags();
         },
         handleClick(tab, event){
-            console.log(this.checktag)
             if(this.checktag != this.oldchecktags){//这次点击的和上一次点击是同一个，则不用刷新页面
                 this.oldchecktags = this.checktag;
                 this.get();
@@ -131,13 +149,16 @@ export default {
         open(url){
             window.open(url, '_blank');
         },
+        changSort(){
+            this.get();
+        }
     },
     created(){
         this.searchTags();
     },
     filters:{
       isNewFilter(val){
-        if(val){
+        if(val == "true"){
             return "新";
         }else{
             return "";
@@ -153,6 +174,13 @@ export default {
     },
 }
 </script>
+<!-->>>这个符号可以穿透加样式，不用去掉scoped -->
 <style scoped>
+    .el-table >>> .warning-row { 
+        background: oldlace;
+    }
 
+    .el-table >>> .success-row {
+        background: #f0f9eb;
+    }
 </style>
