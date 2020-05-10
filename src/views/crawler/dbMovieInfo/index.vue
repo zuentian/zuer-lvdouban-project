@@ -51,15 +51,15 @@
                 <el-table-column align="center" prop="url"  label="豆瓣查看地址" min-width='50'>
                     <template slot-scope="scope"  >
                         <a href='javascript:;' @click="open(scope.row.url)">
-                            <icon-svg  :style="{height:30,width:30}" icon-class="longComment"></icon-svg>
+                            <icon-svg  :style="{height:30,width:30}" icon-class="lookDBMovie"></icon-svg>
                         </a>
                     </template>    
                 </el-table-column> 
                 <el-table-column fixed="right" align="center" label="操作" width="100">
-                <!-- <template slot-scope="scope">
-                    <el-button @click="updateCrawlerUrlInfo(scope.row)"  type="text" size="small">编辑</el-button>
-                    <el-button type="text" size="small" @click="deleteCrawlerUrlInfo(scope.row)">删除</el-button>
-                </template> -->
+                    <template slot-scope="scope">
+                        <el-button v-if="scope.row.syncFlag=='0'" size="small">同步</el-button>
+                        <el-button v-else>重新同步</el-button>
+                    </template>
                 </el-table-column>
             </el-table>
         </el-card>
@@ -151,6 +151,9 @@ export default {
         },
         changSort(){
             this.get();
+        },
+        sycnFlag(id){
+            console.log(id);
         }
     },
     created(){
@@ -165,7 +168,7 @@ export default {
         }
       },
       playableFilter(val){
-          if(val){
+          if(val == "true"){
               return "可播放";
           }else{
               return "不可播放"
