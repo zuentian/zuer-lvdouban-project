@@ -6,7 +6,7 @@ export function getDbMovieInfo(param){
         data:param,
     })
 }
-export function syncBatch(){
+export function syncBatch(param){
     return fetch({
         url:'/movie/CrawlerController/syncBatch',
         method:'post',

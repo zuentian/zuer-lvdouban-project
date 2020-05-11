@@ -64,14 +64,9 @@
                 </el-table-column>
             </el-table>
             <div v-show="isShowPagination" class="block" text-align="center">
-                <el-pagination 
-                    @size-change="handleSizeChange"  
-                    @current-change="handleCurrentChange" 
-                    :current-page="currentPage"
-                    :page-sizes="[5,10,20]"
-                    :page-size="pageSize"
-                    layout="total, sizes, prev, pager, next" >
-                </el-pagination>
+                <el-button :disabled="currentPage<=1" @click="backPage()"><i class="el-icon-arrow-left"></i>上一页</el-button>
+                <span>第{{currentPage}}页</span>
+                <el-button :disabled='maxPageFlag' @click="goPage()">下一页<i class="el-icon-arrow-right"></i></el-button>
             </div>
         </el-card>
     </div>
@@ -97,6 +92,7 @@ export default {
             multipleSelection: [],
             currentPage:1,
             pageSize:10,
+            maxPageFlag:false,
             isShowPagination:false,
         }
     },
@@ -118,8 +114,13 @@ export default {
                 page_start:this.page_start,
                 sort:this.sort,
             }).then(res=>{
-                this.info = res;
-                this.isShowPagination = true;
+                if(res!=null){
+                    this.info = res;
+                    this.isShowPagination = true;
+                }else{
+                    this.maxPageFlag = true;//达到最大页数
+                    this.$message({type: 'warning',message: '没有更多数据'});       
+                }
             }).finally(() => {
               this.loadingForTable = false
             })
@@ -144,6 +145,7 @@ export default {
                 }
                 if(this.checktag != this.oldchecktags){//这次点击的和上一次点击是同一个，则不用刷新页面
                     this.oldchecktags = this.checktag;
+                    this.rollPage();
                     this.get();
                 }
                 this.oldchecktags = this.checktag;
@@ -159,6 +161,7 @@ export default {
         handleClick(tab, event){
             if(this.checktag != this.oldchecktags){//这次点击的和上一次点击是同一个，则不用刷新页面
                 this.oldchecktags = this.checktag;
+                this.rollPage();
                 this.get();
             }
         },
@@ -188,18 +191,30 @@ export default {
                             this.$message({type: 'success',message: '已批量同步'});      
                         })
                     }).catch(() => {
-                        this.$message({type: 'info',message: '已取消同步'});          
+                        this.$message({type: 'info',message: '批量同步异常'});          
                     });
             }else{
                 this.$alert('未选择同步内容', '提醒', {confirmButtonText: '确定',});
             }
         },
-        handleSizeChange(){
-            
+        backPage(){
+            this.currentPage--;
+            this.page_start=this.page_limit*(this.currentPage-1)+1;
+            this.get();
         },
-        handleCurrentChange(){
-
-        }
+        goPage(){
+            this.currentPage++;
+            this.page_start=this.page_limit*(this.currentPage-1)+1;
+            this.get();
+        },
+        rollPage(){//页数回退初识值
+            this.page_limit=10;
+            this.page_start=0;
+            this.currentPage=1;
+            this.pageSize=10;
+            this.maxPageFlag=false;
+            this.isShowPagination=false;
+        },
     },
     created(){
         this.searchTags();
