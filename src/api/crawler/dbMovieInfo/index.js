@@ -6,7 +6,13 @@ export function getDbMovieInfo(param){
         data:param,
     })
 }
-
+export function syncBatch(){
+    return fetch({
+        url:'/movie/CrawlerController/syncBatch',
+        method:'post',
+        data:param,
+    })
+}
 export function searchTags(){
     return fetch({
         url:'/movie/CrawlerController/searchTags',

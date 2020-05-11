@@ -2,11 +2,12 @@
     <div class="dict container">
         <el-card  v-loading="loading" v-show='showflag'>
             <el-row >
-                <el-col :span="22" >
+                <el-col :span="20" >
                     <span style='font-weight:bold'>电影标签选择</span>
                 </el-col>
-                <el-col :span="2" >
+                <el-col :span="4" >
                       <el-button type="warning" icon="el-icon-refresh" @click="refreshTags()"></el-button>
+                      <el-button type="success" icon="el-icon-upload" @click="syncBatch()">批量同步</el-button>
                 </el-col>
             </el-row>
             <el-row :span="24">
@@ -25,7 +26,7 @@
             </el-row>
         </el-card>
         <el-card v-show='tableflag' v-loading="loadingForTable"  >
-            <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}" :row-class-name="tableRowClassName">
+            <el-table :data="info"   style="width: 100%" :row-style="{height:'0'}" :cell-style="{padding:'4px'}" :row-class-name="tableRowClassName" ref="multipleTable"  @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="55"></el-table-column>
                 <el-table-column align="center" prop="title" label="电影名字" min-width='150'></el-table-column>
                 <el-table-column align="center" prop="rate"  label="评分" min-width='50'></el-table-column> 
@@ -62,11 +63,21 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div v-show="isShowPagination" class="block" text-align="center">
+                <el-pagination 
+                    @size-change="handleSizeChange"  
+                    @current-change="handleCurrentChange" 
+                    :current-page="currentPage"
+                    :page-sizes="[5,10,20]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next" >
+                </el-pagination>
+            </div>
         </el-card>
     </div>
 </template>
 <script>
-import {getDbMovieInfo,searchTags} from 'api/crawler/dbMovieInfo/index.js'
+import {getDbMovieInfo,searchTags,syncBatch} from 'api/crawler/dbMovieInfo/index.js'
 export default {
     data(){
         return{
@@ -83,16 +94,20 @@ export default {
             type:'movie',
             page_limit:10,
             page_start:0,
+            multipleSelection: [],
+            currentPage:1,
+            pageSize:10,
+            isShowPagination:false,
         }
     },
     methods:{
         tableRowClassName({row, rowIndex}) {
             if (rowIndex %2 == 1) {
-            return 'warning-row';
+                return 'warning-row';
             } else if (rowIndex %2 == 0) {
-            return 'success-row';
+                return 'success-row';
             }
-            return '';
+                return '';
         },
         get(){
             this.loadingForTable=true;
@@ -104,6 +119,7 @@ export default {
                 sort:this.sort,
             }).then(res=>{
                 this.info = res;
+                this.isShowPagination = true;
             }).finally(() => {
               this.loadingForTable = false
             })
@@ -154,6 +170,35 @@ export default {
         },
         sycnFlag(id){
             console.log(id);
+        },
+        handleSelectionChange(val){
+            this.multipleSelection = val.map(item=>{
+                var o=new Object();
+                o.id = item.id;
+                o.url = item.url;
+                return o;
+            });
+        },
+        syncBatch(){//批量同步
+            var len = this.multipleSelection.length;
+            if(len>0){
+                this.$confirm('此操作将, 是否继续?', '提示', {confirmButtonText: '确定',cancelButtonText: '取消',type: 'warning'
+                    }).then(() => {
+                        syncBatch(this.multipleSelection).then(res=>{
+                            this.$message({type: 'success',message: '已批量同步'});      
+                        })
+                    }).catch(() => {
+                        this.$message({type: 'info',message: '已取消同步'});          
+                    });
+            }else{
+                this.$alert('未选择同步内容', '提醒', {confirmButtonText: '确定',});
+            }
+        },
+        handleSizeChange(){
+            
+        },
+        handleCurrentChange(){
+
         }
     },
     created(){
@@ -185,5 +230,9 @@ export default {
 
     .el-table >>> .success-row {
         background: #f0f9eb;
+    }
+    .block{
+        margin:20px auto;
+        text-align:center;
     }
 </style>
