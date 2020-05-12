@@ -56,10 +56,10 @@
                         </a>
                     </template>    
                 </el-table-column> 
-                <el-table-column fixed="right" align="center" label="操作" width="100">
+                <el-table-column fixed="right" align="center" label="操作" width="200">
                     <template slot-scope="scope">
                         <el-button v-if="scope.row.syncFlag=='0'" size="small">同步</el-button>
-                        <el-button v-else>重新同步</el-button>
+                        <el-button v-else size="small" type="danger">重新同步</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -185,10 +185,11 @@ export default {
         syncBatch(){//批量同步
             var len = this.multipleSelection.length;
             if(len>0){
-                this.$confirm('此操作将, 是否继续?', '提示', {confirmButtonText: '确定',cancelButtonText: '取消',type: 'warning'
+                this.$confirm('此操作会将数据同步到该系统, 是否继续?', '提示', {confirmButtonText: '确定',cancelButtonText: '取消',type: 'warning'
                     }).then(() => {
                         syncBatch(this.multipleSelection).then(res=>{
                             this.$message({type: 'success',message: '已批量同步'});      
+                            this.get();
                         })
                     }).catch(() => {
                         this.$message({type: 'info',message: '批量同步异常'});          
